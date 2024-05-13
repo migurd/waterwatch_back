@@ -1,5 +1,5 @@
 build:
-	@go build -o bin/waterwatch_back
+	@go build -o bin/waterwatch_back ./cmd/waterwatch_back
 
 run: build
 	@./bin/waterwatch_back
