@@ -28,6 +28,14 @@ type Account struct {
 	UserId   *int   `json:"user_id"`
 }
 
+type AccountSecurity struct {
+	Id                      *int      `json:"id"`
+	UserId                  int       `json:"user_id"`
+	Attempts                int       `json:"attempts"`
+	LastAttempt             time.Time `json:"last_attempt"`
+	LastTimePasswordChanged time.Time `json:"last_time_password_changed"`
+}
+
 type PhoneNumber struct {
 	Id          int    `json:"id"`
 	AccountId   int    `json:"account_id"`
@@ -70,4 +78,5 @@ type SAA struct {
 	SAATypeId         int `json:"SAA_type_id"`
 	MicrocontrollerId int `json:"microcontroller_id"`
 	AccountId         int `json:"account_id"`
+	AddressId         int `json:"address_id"`
 }

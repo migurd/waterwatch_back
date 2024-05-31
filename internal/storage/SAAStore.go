@@ -9,14 +9,15 @@ import (
 
 func (s *PostgresStore) CreateSAA(SAA *types.SAA) error {
 	query := `
-	INSERT INTO "SAA" (SAA_type_id, microcontroller_id, account_id)
-	VALUES ($1, $2, $3)`
+	INSERT INTO "SAA" (SAA_type_id, microcontroller_id, account_id, address_id)
+	VALUES ($1, $2, $3, $4)`
 
 	res, err := s.db.Query(
 		query,
 		SAA.SAATypeId,
 		SAA.MicrocontrollerId,
 		SAA.AccountId,
+		SAA.AddressId,
 	)
 
 	if err != nil {
@@ -31,7 +32,7 @@ func (s *PostgresStore) CreateSAA(SAA *types.SAA) error {
 func (s *PostgresStore) UpdateSAA(SAA *types.SAA) error {
 	query := `
 	UPDATE "SAA"
-	SET SAA_type_id = ?, microcontroller_id = ?, account_id = ?
+	SET SAA_type_id = ?, microcontroller_id = ?, account_id = ?, address_id = ?
 	WHERE id = ?`
 
 	res, err := s.db.Query(
@@ -39,6 +40,7 @@ func (s *PostgresStore) UpdateSAA(SAA *types.SAA) error {
 		SAA.SAATypeId,
 		SAA.MicrocontrollerId,
 		SAA.AccountId,
+		SAA.AddressId,
 		SAA.Id,
 	)
 
@@ -101,6 +103,7 @@ func scanIntoSAA(rows *sql.Rows) (*types.SAA, error) {
 		&SAA.SAATypeId,
 		&SAA.MicrocontrollerId,
 		&SAA.AccountId,
+		&SAA.AddressId,
 	)
 
 	if err != nil {

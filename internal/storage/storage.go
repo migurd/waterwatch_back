@@ -2,7 +2,11 @@ package storage
 
 import (
 	"database/sql"
+	"log"
+	"os"
+	"fmt"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/migurd/waterwatch_back/internal/types"
 )
@@ -20,6 +24,11 @@ type Storage interface {
 	UpdateAccount(*types.Account) error
 	GetAccountByEmail(string) (*types.Account, error)
 	GetAccounts() ([]*types.Account, error)
+
+	CreateAccountSecurity(*types.AccountSecurity) error
+	UpdateAccountSecurity(*types.AccountSecurity) error
+	GetAccountSecurityByEmail(string) (*types.AccountSecurity, error)
+
 
 	CreatePhoneNumber(*types.PhoneNumber) error
 	UpdatePhoneNumber(*types.PhoneNumber) error
@@ -51,7 +60,18 @@ type PostgresStore struct {
 }
 
 func NewPostgresStore() (*PostgresStore, error) {
-	connStr := "user=angelq password=cisco123 dbname=waterwatch sslmode=disable"
+	// env
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Environment variables didn't load")
+	}
+
+	db_user := os.Getenv("DB_USER")
+	db_password := os.Getenv("DB_PASSWORD")
+	db_name := os.Getenv("DB_NAME")
+	
+	// db connection
+	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", db_user, db_password, db_name)
 	db, err := sql.Open("postgres", connStr)
 
 	if err != nil {
