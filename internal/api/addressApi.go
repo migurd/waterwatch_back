@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/migurd/waterwatch_back/internal/types"
+	"github.com/migurd/waterwatch_back/helpers"
 )
 
 func (s *APIServer) handleAddress(w http.ResponseWriter, r *http.Request) error {
@@ -22,13 +23,13 @@ func (s *APIServer) handleAddress(w http.ResponseWriter, r *http.Request) error 
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
 
-func (s *APIServer) handleGetAddress(w http.ResponseWriter, r *http.Request, email string) error {
+func (s *APIServer) handleGetAddress(w http.ResponseWriter, _ *http.Request, email string) error {
 	address, err := s.store.GetAddressByEmail(email)
 	if err != nil {
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, address)
+	return helpers.WriteJSON(w, http.StatusOK, address)
 }
 
 func (s *APIServer) handleCreateAddress(w http.ResponseWriter, r *http.Request) error {
@@ -49,5 +50,5 @@ func (s *APIServer) handleCreateAddress(w http.ResponseWriter, r *http.Request) 
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, address)
+	return helpers.WriteJSON(w, http.StatusOK, address)
 }

@@ -14,7 +14,7 @@ func (s *PostgresStore) CreateSAAMaintenance(SAA_maintenance *types.SAAMaintenan
 
 	res, err := s.db.Query(
 		query,
-		SAA_maintenance.SAAId,
+		SAA_maintenance.SAAID,
 		SAA_maintenance.Details,
 		SAA_maintenance.RequestedDate,
 		SAA_maintenance.DoneDate,
@@ -37,11 +37,11 @@ func (s *PostgresStore) UpdateSAAMaintenance(SAA_maintenance *types.SAAMaintenan
 
 	res, err := s.db.Query(
 		query,
-		SAA_maintenance.SAAId,
+		SAA_maintenance.SAAID,
 		SAA_maintenance.Details,
 		SAA_maintenance.RequestedDate,
 		SAA_maintenance.DoneDate,
-		SAA_maintenance.Id,
+		SAA_maintenance.ID,
 	)
 
 	if err != nil {
@@ -101,8 +101,8 @@ func (s *PostgresStore) GetSAAMaintenances() ([]*types.SAAMaintenance, error) {
 func scanIntoSAAMaintenance(rows *sql.Rows) (*types.SAAMaintenance, error) {
 	SAA_maintenance := new(types.SAAMaintenance)
 	err := rows.Scan(
-		&SAA_maintenance.Id,
-		&SAA_maintenance.SAAId,
+		&SAA_maintenance.ID,
+		&SAA_maintenance.SAAID,
 		&SAA_maintenance.Details,
 		&SAA_maintenance.RequestedDate,
 		&SAA_maintenance.DoneDate,

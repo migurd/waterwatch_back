@@ -37,7 +37,7 @@ func (s *PostgresStore) UpdateMicrocontroller(microcontroller *types.Microcontro
 		query,
 		microcontroller.SerialKey,
 		microcontroller.Status,
-		microcontroller.Id,
+		microcontroller.ID,
 	)
 
 	if err != nil {
@@ -97,7 +97,7 @@ func (s *PostgresStore) GetMicrocontrollers() ([]*types.Microcontroller, error) 
 func scanIntoMicrocontroller(rows *sql.Rows) (*types.Microcontroller, error) {
 	microcontroller := new(types.Microcontroller)
 	err := rows.Scan(
-		&microcontroller.Id,
+		&microcontroller.ID,
 		&microcontroller.SerialKey,
 		&microcontroller.Status,
 	)

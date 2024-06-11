@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/migurd/waterwatch_back/internal/types"
+	"github.com/migurd/waterwatch_back/helpers"
 )
 
 func (s *APIServer) handleMicrocontroller(w http.ResponseWriter, r *http.Request) error {
@@ -13,7 +14,7 @@ func (s *APIServer) handleMicrocontroller(w http.ResponseWriter, r *http.Request
 		if email := r.Header.Get("email"); email != "" {
 			return s.handleGetMicrocontroller(w, r, email)
 		}
-		return fmt.Errorf("email wasn't found for the microcontroller requested.")
+		return fmt.Errorf("email wasn't found for the microcontroller requested")
 	}
 	if r.Method == "POST" {
 		return s.handleCreateMicrocontroller(w, r)
@@ -22,13 +23,13 @@ func (s *APIServer) handleMicrocontroller(w http.ResponseWriter, r *http.Request
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
 
-func (s *APIServer) handleGetMicrocontroller(w http.ResponseWriter, r *http.Request, email string) error {
+func (s *APIServer) handleGetMicrocontroller(w http.ResponseWriter, _ *http.Request, email string) error {
 	microcontroller, err := s.store.GetMicrocontrollerByEmail(email)
 	if err != nil {
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, microcontroller)
+	return helpers.WriteJSON(w, http.StatusOK, microcontroller)
 }
 
 func (s *APIServer) handleCreateMicrocontroller(w http.ResponseWriter, r *http.Request) error {
@@ -45,5 +46,5 @@ func (s *APIServer) handleCreateMicrocontroller(w http.ResponseWriter, r *http.R
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, microcontroller)
+	return helpers.WriteJSON(w, http.StatusOK, microcontroller)
 }

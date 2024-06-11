@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/migurd/waterwatch_back/helpers"
 	"github.com/migurd/waterwatch_back/internal/types"
 )
 
@@ -13,7 +14,7 @@ func (s *APIServer) handleSAA(w http.ResponseWriter, r *http.Request) error {
 		if email := r.Header.Get("email"); email != "" {
 			return s.handleGetSAA(w, r, email)
 		}
-		return fmt.Errorf("email wasn't found for the SAA requested.")
+		return fmt.Errorf("email wasn't found for the SAA requested")
 	}
 	if r.Method == "POST" {
 		return s.handleCreateSAA(w, r)
@@ -22,13 +23,13 @@ func (s *APIServer) handleSAA(w http.ResponseWriter, r *http.Request) error {
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
 
-func (s *APIServer) handleGetSAA(w http.ResponseWriter, r *http.Request, email string) error {
+func (s *APIServer) handleGetSAA(w http.ResponseWriter, _ *http.Request, email string) error {
 	SAA_obj, err := s.store.GetSAAByEmail(email)
 	if err != nil {
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, SAA_obj)
+	return helpers.WriteJSON(w, http.StatusOK, SAA_obj)
 }
 
 func (s *APIServer) handleCreateSAA(w http.ResponseWriter, r *http.Request) error {
@@ -38,13 +39,13 @@ func (s *APIServer) handleCreateSAA(w http.ResponseWriter, r *http.Request) erro
 	}
 
 	SAA_obj := &types.SAA{
-		SAATypeId:         createSAAReq.SAATypeId,
-		MicrocontrollerId: createSAAReq.MicrocontrollerId,
-		AccountId:         createSAAReq.AccountId,
+		SAATypeID:         createSAAReq.SAATypeID,
+		MicrocontrollerID: createSAAReq.MicrocontrollerID,
+		AccountID:         createSAAReq.AccountID,
 	}
 	if err := s.store.CreateSAA(SAA_obj); err != nil {
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, SAA_obj)
+	return helpers.WriteJSON(w, http.StatusOK, SAA_obj)
 }

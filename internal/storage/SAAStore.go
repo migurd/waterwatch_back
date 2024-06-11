@@ -14,10 +14,10 @@ func (s *PostgresStore) CreateSAA(SAA *types.SAA) error {
 
 	res, err := s.db.Query(
 		query,
-		SAA.SAATypeId,
-		SAA.MicrocontrollerId,
-		SAA.AccountId,
-		SAA.AddressId,
+		SAA.SAATypeID,
+		SAA.MicrocontrollerID,
+		SAA.AccountID,
+		SAA.AddressID,
 	)
 
 	if err != nil {
@@ -37,11 +37,11 @@ func (s *PostgresStore) UpdateSAA(SAA *types.SAA) error {
 
 	res, err := s.db.Query(
 		query,
-		SAA.SAATypeId,
-		SAA.MicrocontrollerId,
-		SAA.AccountId,
-		SAA.AddressId,
-		SAA.Id,
+		SAA.SAATypeID,
+		SAA.MicrocontrollerID,
+		SAA.AccountID,
+		SAA.AddressID,
+		SAA.ID,
 	)
 
 	if err != nil {
@@ -99,11 +99,11 @@ func (s *PostgresStore) GetSAAs() ([]*types.SAA, error) {
 func scanIntoSAA(rows *sql.Rows) (*types.SAA, error) {
 	SAA := new(types.SAA)
 	err := rows.Scan(
-		&SAA.Id,
-		&SAA.SAATypeId,
-		&SAA.MicrocontrollerId,
-		&SAA.AccountId,
-		&SAA.AddressId,
+		&SAA.ID,
+		&SAA.SAATypeID,
+		&SAA.MicrocontrollerID,
+		&SAA.AccountID,
+		&SAA.AddressID,
 	)
 
 	if err != nil {

@@ -79,7 +79,7 @@ func (s *PostgresStore) GetAddressByEmail(email string) (*types.Address, error) 
 func scanIntoAddress(rows *sql.Rows) (*types.Address, error) {
 	address := new(types.Address)
 	err := rows.Scan(
-		&address.Id,
+		&address.ID,
 		&address.State,
 		&address.City,
 		&address.Street,

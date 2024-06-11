@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/migurd/waterwatch_back/internal/types"
+	"github.com/migurd/waterwatch_back/helpers"
 )
 
 func (s *APIServer) handleSAARecord(w http.ResponseWriter, r *http.Request) error {
@@ -13,7 +14,7 @@ func (s *APIServer) handleSAARecord(w http.ResponseWriter, r *http.Request) erro
 		if email := r.Header.Get("email"); email != "" {
 			return s.handleGetSAARecord(w, r, email)
 		}
-		return fmt.Errorf("email wasn't found for the SAA_record requested.")
+		return fmt.Errorf("email wasn't found for the SAA_record requested")
 	}
 	if r.Method == "POST" {
 		return s.handleCreateSAARecord(w, r)
@@ -22,13 +23,13 @@ func (s *APIServer) handleSAARecord(w http.ResponseWriter, r *http.Request) erro
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
 
-func (s *APIServer) handleGetSAARecord(w http.ResponseWriter, r *http.Request, email string) error {
+func (s *APIServer) handleGetSAARecord(w http.ResponseWriter, _ *http.Request, email string) error {
 	SAA_record, err := s.store.GetSAARecordByEmail(email)
 	if err != nil {
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, SAA_record)
+	return helpers.WriteJSON(w, http.StatusOK, SAA_record)
 }
 
 func (s *APIServer) handleCreateSAARecord(w http.ResponseWriter, r *http.Request) error {
@@ -38,7 +39,7 @@ func (s *APIServer) handleCreateSAARecord(w http.ResponseWriter, r *http.Request
 	}
 
 	SAA_record := &types.SAARecord{
-		SAAId:          createSAARecordReq.SAAId,
+		SAAID:          createSAARecordReq.SAAID,
 		WaterLevel:     createSAARecordReq.WaterLevel,
 		PHLevel:        createSAARecordReq.PHLevel,
 		IsContaminated: createSAARecordReq.IsContaminated,
@@ -48,5 +49,5 @@ func (s *APIServer) handleCreateSAARecord(w http.ResponseWriter, r *http.Request
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, SAA_record)
+	return helpers.WriteJSON(w, http.StatusOK, SAA_record)
 }

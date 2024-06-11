@@ -14,7 +14,7 @@ func (s *PostgresStore) CreateSAARecord(SAA_record *types.SAARecord) error {
 
 	res, err := s.db.Query(
 		query,
-		SAA_record.SAAId,
+		SAA_record.SAAID,
 		SAA_record.WaterLevel,
 		SAA_record.PHLevel,
 		SAA_record.IsContaminated,
@@ -38,12 +38,12 @@ func (s *PostgresStore) UpdateSAARecord(SAA_record *types.SAARecord) error {
 
 	res, err := s.db.Query(
 		query,
-		SAA_record.SAAId,
+		SAA_record.SAAID,
 		SAA_record.WaterLevel,
 		SAA_record.PHLevel,
 		SAA_record.IsContaminated,
 		SAA_record.Date,
-		SAA_record.Id,
+		SAA_record.ID,
 	)
 
 	if err != nil {
@@ -103,8 +103,8 @@ func (s *PostgresStore) GetSAARecords() ([]*types.SAARecord, error) {
 func scanIntoSAARecord(rows *sql.Rows) (*types.SAARecord, error) {
 	SAA_record := new(types.SAARecord)
 	err := rows.Scan(
-		&SAA_record.Id,
-		&SAA_record.SAAId,
+		&SAA_record.ID,
+		&SAA_record.SAAID,
 		&SAA_record.WaterLevel,
 		&SAA_record.PHLevel,
 		&SAA_record.IsContaminated,

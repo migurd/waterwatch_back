@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/migurd/waterwatch_back/internal/types"
+	"github.com/migurd/waterwatch_back/helpers"
 )
 
 func (s *APIServer) handleSAAMaintenance(w http.ResponseWriter, r *http.Request) error {
@@ -13,7 +14,7 @@ func (s *APIServer) handleSAAMaintenance(w http.ResponseWriter, r *http.Request)
 		if email := r.Header.Get("email"); email != "" {
 			return s.handleGetSAAMaintenance(w, r, email)
 		}
-		return fmt.Errorf("email wasn't found for the SAA_maintenance requested.")
+		return fmt.Errorf("email wasn't found for the SAA_maintenance requested")
 	}
 	if r.Method == "POST" {
 		return s.handleCreateSAAMaintenance(w, r)
@@ -22,13 +23,13 @@ func (s *APIServer) handleSAAMaintenance(w http.ResponseWriter, r *http.Request)
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
 
-func (s *APIServer) handleGetSAAMaintenance(w http.ResponseWriter, r *http.Request, email string) error {
+func (s *APIServer) handleGetSAAMaintenance(w http.ResponseWriter, _ *http.Request, email string) error {
 	SAA_maintenance, err := s.store.GetSAAMaintenanceByEmail(email)
 	if err != nil {
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, SAA_maintenance)
+	return helpers.WriteJSON(w, http.StatusOK, SAA_maintenance)
 }
 
 func (s *APIServer) handleCreateSAAMaintenance(w http.ResponseWriter, r *http.Request) error {
@@ -38,7 +39,7 @@ func (s *APIServer) handleCreateSAAMaintenance(w http.ResponseWriter, r *http.Re
 	}
 
 	SAA_maintenance := &types.SAAMaintenance{
-		SAAId:         createSAAMaintenanceReq.SAAId,
+		SAAID:         createSAAMaintenanceReq.SAAID,
 		Details:       createSAAMaintenanceReq.Details,
 		RequestedDate: createSAAMaintenanceReq.RequestedDate,
 		DoneDate:      createSAAMaintenanceReq.DoneDate,
@@ -47,5 +48,5 @@ func (s *APIServer) handleCreateSAAMaintenance(w http.ResponseWriter, r *http.Re
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, SAA_maintenance)
+	return helpers.WriteJSON(w, http.StatusOK, SAA_maintenance)
 }

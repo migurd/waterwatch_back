@@ -14,7 +14,7 @@ func (s *PostgresStore) CreatePhoneNumber(phoneNumber *types.PhoneNumber) error 
 
 	res, err := s.db.Query(
 		query,
-		phoneNumber.AccountId,
+		phoneNumber.AccountID,
 		phoneNumber.PhoneNumber,
 	)
 
@@ -35,9 +35,9 @@ func (s *PostgresStore) UpdatePhoneNumber(phoneNumber *types.PhoneNumber) error 
 
 	res, err := s.db.Query(
 		query,
-		phoneNumber.AccountId,
+		phoneNumber.AccountID,
 		phoneNumber.PhoneNumber,
-		phoneNumber.Id,
+		phoneNumber.ID,
 	)
 
 	if err != nil {
@@ -95,8 +95,8 @@ func (s *PostgresStore) GetPhoneNumbers() ([]*types.PhoneNumber, error) {
 func scanIntoPhoneNumber(rows *sql.Rows) (*types.PhoneNumber, error) {
 	phoneNumber := new(types.PhoneNumber)
 	err := rows.Scan(
-		&phoneNumber.Id,
-		&phoneNumber.AccountId,
+		&phoneNumber.ID,
+		&phoneNumber.AccountID,
 		&phoneNumber.PhoneNumber,
 	)
 

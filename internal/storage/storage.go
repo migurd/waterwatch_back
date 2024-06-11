@@ -29,7 +29,6 @@ type Storage interface {
 	UpdateAccountSecurity(*types.AccountSecurity) error
 	GetAccountSecurityByEmail(string) (*types.AccountSecurity, error)
 
-
 	CreatePhoneNumber(*types.PhoneNumber) error
 	UpdatePhoneNumber(*types.PhoneNumber) error
 	GetPhoneNumberByEmail(string) (*types.PhoneNumber, error)

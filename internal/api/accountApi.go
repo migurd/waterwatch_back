@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/migurd/waterwatch_back/internal/types"
+	"github.com/migurd/waterwatch_back/helpers"
 )
 
 func (s *APIServer) handleAccount(w http.ResponseWriter, r *http.Request) error {
@@ -22,23 +23,23 @@ func (s *APIServer) handleAccount(w http.ResponseWriter, r *http.Request) error 
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
 
-func (s *APIServer) handleGetAccounts(w http.ResponseWriter, r *http.Request) error {
+func (s *APIServer) handleGetAccounts(w http.ResponseWriter, _ *http.Request) error {
 	accounts, err := s.store.GetAccounts()
 
 	if err != nil {
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, accounts)
+	return helpers.WriteJSON(w, http.StatusOK, accounts)
 }
 
-func (s *APIServer) handleGetAccount(w http.ResponseWriter, r *http.Request, email string) error {
+func (s *APIServer) handleGetAccount(w http.ResponseWriter, _ *http.Request, email string) error {
 	account, err := s.store.GetAccountByEmail(email)
 	if err != nil {
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, account)
+	return helpers.WriteJSON(w, http.StatusOK, account)
 }
 
 func (s *APIServer) handleCreateAccount(w http.ResponseWriter, r *http.Request) error {
@@ -55,5 +56,5 @@ func (s *APIServer) handleCreateAccount(w http.ResponseWriter, r *http.Request) 
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, account)
+	return helpers.WriteJSON(w, http.StatusOK, account)
 }

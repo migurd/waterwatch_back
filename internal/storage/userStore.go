@@ -4,27 +4,41 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/migurd/waterwatch_back/helpers"
 	"github.com/migurd/waterwatch_back/internal/types"
 )
 
 func (s *PostgresStore) CreateUser(user *types.User) error {
+	var userID int
 	query := `
-	INSERT INTO user (email, first_name, last_name, address_id)
-	VALUES ($1, $2, $3, $4)`
+	INSERT INTO "user" (email, first_name, last_name)
+	VALUES ($1, $2, $3)
+	RETURNING id`
 
-	res, err := s.db.Query(
+	err := s.db.QueryRow(
 		query,
 		user.Email,
 		user.FirstName,
 		user.LastName,
-		user.AddressId,
-	)
+		// user.AddressID,
+	).Scan(&userID)
 
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("%+v\n", res)
+	// Once user has been created, then create account
+	pass, err := helpers.GenerateSecurePassword(12)
+	if err != nil {
+		return err
+	}
+	username := helpers.GenerateUser(user.FirstName, user.LastName)
+
+	s.CreateAccount(&types.Account{
+		UserID:   userID,
+		Password: pass,
+		Username: username,
+	})
 
 	return nil
 }
@@ -40,8 +54,8 @@ func (s *PostgresStore) UpdateUser(user *types.User) error {
 		user.Email,
 		user.FirstName,
 		user.LastName,
-		user.AddressId,
-		user.Id,
+		user.AddressID,
+		user.ID,
 	)
 
 	if err != nil {
@@ -89,11 +103,11 @@ func (s *PostgresStore) GetUsers() ([]*types.User, error) {
 func scanIntoUser(rows *sql.Rows) (*types.User, error) {
 	user := new(types.User)
 	err := rows.Scan(
-		&user.Id,
+		&user.ID,
 		&user.Email,
 		&user.FirstName,
 		&user.LastName,
-		&user.AddressId,
+		&user.AddressID,
 	)
 
 	if err != nil {

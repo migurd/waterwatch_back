@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/migurd/waterwatch_back/internal/types"
+	"github.com/migurd/waterwatch_back/helpers"
 )
 
 func (s *APIServer) handleSAAType(w http.ResponseWriter, r *http.Request) error {
@@ -13,7 +14,7 @@ func (s *APIServer) handleSAAType(w http.ResponseWriter, r *http.Request) error 
 		if email := r.Header.Get("email"); email != "" {
 			return s.handleGetSAAType(w, r, email)
 		}
-		return fmt.Errorf("email wasn't found for the SAA_type requested.")
+		return fmt.Errorf("email wasn't found for the SAA_type requested")
 	}
 	if r.Method == "POST" {
 		return s.handleCreateSAAType(w, r)
@@ -22,13 +23,13 @@ func (s *APIServer) handleSAAType(w http.ResponseWriter, r *http.Request) error 
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
 
-func (s *APIServer) handleGetSAAType(w http.ResponseWriter, r *http.Request, email string) error {
+func (s *APIServer) handleGetSAAType(w http.ResponseWriter, _ *http.Request, email string) error {
 	SAA_type, err := s.store.GetSAATypeByEmail(email)
 	if err != nil {
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, SAA_type)
+	return helpers.WriteJSON(w, http.StatusOK, SAA_type)
 }
 
 func (s *APIServer) handleCreateSAAType(w http.ResponseWriter, r *http.Request) error {
@@ -46,5 +47,5 @@ func (s *APIServer) handleCreateSAAType(w http.ResponseWriter, r *http.Request) 
 		return err
 	}
 
-	return WriteJSON(w, http.StatusOK, SAA_type)
+	return helpers.WriteJSON(w, http.StatusOK, SAA_type)
 }

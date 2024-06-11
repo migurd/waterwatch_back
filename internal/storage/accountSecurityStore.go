@@ -12,7 +12,7 @@ func (s *PostgresStore) CreateAccountSecurity(account *types.AccountSecurity) er
 	INSERT INTO account (user_id, attempts, last_attempt, last_time_password_changed)
 	VALUES ($1, $2, $3, $4)`
 
-	res, err := s.db.Query(query, account.UserId, account.Attempts, account.LastAttempt, account.LastTimePasswordChanged)
+	res, err := s.db.Query(query, account.UserID, account.Attempts, account.LastAttempt, account.LastTimePasswordChanged)
 
 	if err != nil {
 		return err
@@ -31,11 +31,11 @@ func (s *PostgresStore) UpdateAccountSecurity(account *types.AccountSecurity) er
 
 	res, err := s.db.Query(
 		query,
-		account.UserId,
+		account.UserID,
 		account.Attempts,
 		account.LastAttempt,
 		account.LastTimePasswordChanged,
-		account.Id,
+		account.ID,
 	)
 
 	if err != nil {
@@ -72,8 +72,8 @@ func (s *PostgresStore) GetAccountSecurityByEmail(email string) (*types.AccountS
 func scanIntoAccountSecurity(rows *sql.Rows) (*types.AccountSecurity, error) {
 	account := new(types.AccountSecurity)
 	err := rows.Scan(
-		&account.Id,
-		&account.UserId,
+		&account.ID,
+		&account.UserID,
 		&account.Attempts,
 		&account.LastAttempt,
 		&account.LastTimePasswordChanged,

@@ -39,7 +39,7 @@ func (s *PostgresStore) UpdateSAAType(SAA_type *types.SAAType) error {
 		SAA_type.Name,
 		SAA_type.Description,
 		SAA_type.Capacity,
-		SAA_type.Id,
+		SAA_type.ID,
 	)
 
 	if err != nil {
@@ -99,7 +99,7 @@ func (s *PostgresStore) GetSAATypes() ([]*types.SAAType, error) {
 func scanIntoSAAType(rows *sql.Rows) (*types.SAAType, error) {
 	SAA_type := new(types.SAAType)
 	err := rows.Scan(
-		&SAA_type.Id,
+		&SAA_type.ID,
 		&SAA_type.Name,
 		&SAA_type.Description,
 		&SAA_type.Capacity,

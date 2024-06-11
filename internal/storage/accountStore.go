@@ -12,7 +12,11 @@ func (s *PostgresStore) CreateAccount(account *types.Account) error {
 	INSERT INTO account (username, password, user_id)
 	VALUES ($1, $2, $3)`
 
-	res, err := s.db.Query(query, account.Username, account.Password, account.UserId)
+	// Send email to user including both password and username
+	
+	// Encrypt pass
+	
+	res, err := s.db.Query(query, account.Username, account.Password, account.UserID)
 
 	if err != nil {
 		return err
@@ -33,8 +37,8 @@ func (s *PostgresStore) UpdateAccount(account *types.Account) error {
 		query,
 		account.Username,
 		account.Password,
-		account.UserId,
-		account.Id,
+		account.UserID,
+		account.ID,
 	)
 
 	if err != nil {
@@ -89,10 +93,10 @@ func (s *PostgresStore) GetAccounts() ([]*types.Account, error) {
 func scanIntoAccount(rows *sql.Rows) (*types.Account, error) {
 	account := new(types.Account)
 	err := rows.Scan(
-		&account.Id,
+		&account.ID,
 		&account.Username,
 		&account.Password,
-		&account.UserId,
+		&account.UserID,
 	)
 
 	if err != nil {
