@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/migurd/waterwatch_back/database"
+	"github.com/migurd/waterwatch_back/models"
 	"github.com/migurd/waterwatch_back/router"
 )
 
@@ -16,6 +17,7 @@ type Config struct {
 
 type Application struct {
 	Config Config
+	Models models.Models
 }
 
 var port = os.Getenv("PORT")
@@ -45,6 +47,7 @@ func main() {
 
 	app := &Application{
 		Config: cfg,
+		Models: models.New(dbConn.DB),
 	}
 
 	err = app.Serve()
