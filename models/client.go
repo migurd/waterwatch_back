@@ -8,6 +8,26 @@ type Client struct {
 	LastName  string `json:"last_name"`
 }
 
+func (c *Client) CreateClient() (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query :=
+		`INSERT INTO client
+		(first_name, last_name)
+		VALUES ($1, $2)
+		RETURNING id`
+
+	var id int64
+	err := db.QueryRowContext(
+		ctx, query, c.FirstName, c.LastName).Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
 func (c *Client) GetAllClients() ([]*Client, error) {
 	// Ctx so it closes after 3 scs
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)

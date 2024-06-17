@@ -9,7 +9,7 @@ build:
 run: build
 	@./bin/waterwatch_back
 
-deploy: docker-up goose-up run
+deploy: docker-up migrate-up run
 
 test:
 	@go test -v ./...
@@ -22,8 +22,8 @@ docker-down:
 	@docker-compose down
 
 # Goose
-goose-up:
+migrate-up:
 	@cd migration && goose postgres "host=localhost user=$$DB_USER dbname=$$DB_NAME password=$$DB_PASSWORD sslmode=disable" up && cd ..
 
-goose-down:
+migrate-down:
 	@cd migration && goose postgres "host=localhost user=$$DB_USER dbname=$$DB_NAME password=$$DB_PASSWORD sslmode=disable" down && cd ..

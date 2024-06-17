@@ -7,8 +7,15 @@ import (
 	"github.com/migurd/waterwatch_back/models"
 )
 
-var mod models.Models
-var client = mod.Client
+func CreateClient(w http.ResponseWriter, r *http.Request) error {
+	var client models.Client
+	_, err := client.CreateClient()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func GetAllClients(w http.ResponseWriter, r *http.Request) error {
 	var clients models.Client
