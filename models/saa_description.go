@@ -8,7 +8,7 @@ type SaaDescription struct {
 	Description string `json:"description"`
 }
 
-func CreateSaaDescription(s *SaaDescription) error {
+func (s *SaaDescription) CreateSaaDescription() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 

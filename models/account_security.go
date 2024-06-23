@@ -14,7 +14,7 @@ type AccountSecurity struct {
 	IsPasswordEncrypted     bool      `json:"is_password_encrypted"`
 }
 
-func CreateAccountSecurity(a *AccountSecurity) error {
+func (a *AccountSecurity) CreateAccountSecurity() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 

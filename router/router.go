@@ -11,10 +11,7 @@ import (
 func Routes() http.Handler {
 	router := mux.NewRouter()
 
-	// Create
-	router.HandleFunc("/client", helpers.MakeHTTPHandleFunc(controllers.CreateClient)).Methods("POST")
-
-	// Read
-	router.HandleFunc("/client", helpers.MakeHTTPHandleFunc(controllers.GetAllClients)).Methods("GET")
+	router.HandleFunc("/create_client_appointment", helpers.MakeHTTPHandleFunc(controllers.CreateClientAppointment)).Methods("POST")
+	router.HandleFunc("/create_employee", helpers.MakeHTTPHandleFunc(controllers.CreateEmployee)).Methods("POST")
 	return router
 }

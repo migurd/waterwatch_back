@@ -11,7 +11,7 @@ type SaaType struct {
 	Height      float64 `json:"height"`
 }
 
-func CreateSaaType(s *SaaType) error {
+func (s *SaaType) CreateSaaType() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 

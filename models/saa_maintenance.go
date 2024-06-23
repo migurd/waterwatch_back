@@ -8,7 +8,7 @@ type SaaMaintenance struct {
 	SaaID         int64 `json:"saa_id"`
 }
 
-func CreateSaaMaintenance(s *SaaMaintenance) error {
+func (s *SaaMaintenance) CreateSaaMaintenance() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 

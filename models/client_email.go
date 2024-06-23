@@ -7,7 +7,7 @@ type ClientEmail struct {
 	Email    string `json:"email"`
 }
 
-func CreateClientEmail(c *ClientEmail) error {
+func (c *ClientEmail) CreateClientEmail() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
@@ -26,4 +26,19 @@ func CreateClientEmail(c *ClientEmail) error {
 		return err
 	}
 	return nil
+}
+
+func (c *ClientEmail) GetClientEmailIDByEmail() (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query :=
+		`SELECT id FROM client_email WHERE email = ?`
+
+	var id int64
+	err := db.QueryRowContext(ctx, query, c.Email).Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
 }

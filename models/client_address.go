@@ -12,7 +12,7 @@ type ClientAddress struct {
 	PostalCode   string `json:"postal_code"`
 }
 
-func CreateClientAddress(c *ClientAddress) error {
+func (c *ClientAddress) CreateClientAddress() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 

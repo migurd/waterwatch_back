@@ -8,7 +8,7 @@ type ClientPhoneNumber struct {
 	PhoneNumber string `json:"phone_number"`
 }
 
-func CreateClientPhoneNumber(c *ClientPhoneNumber) error {
+func (c *ClientPhoneNumber) CreateClientPhoneNumber() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 

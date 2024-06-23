@@ -15,13 +15,13 @@ CREATE TABLE IF NOT EXISTS public.account
 
 CREATE TABLE IF NOT EXISTS public.account_security
 (
-    account_id bigint NOT NULL,
+    account_client_id bigint NOT NULL,
     attempts integer DEFAULT 0,
     max_attempts integer DEFAULT 5,
-    last_attempt timestamp with time zone NOT NULL,
+    last_attempt timestamp with time zone,
     last_time_password_changed timestamp with time zone,
-    is_password_encrypted boolean DEFAULT false,
-    CONSTRAINT account_security_pkey PRIMARY KEY (account_id)
+    is_password_encrypted boolean DEFAULT FALSE,
+    PRIMARY KEY (account_client_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.appointment
@@ -76,10 +76,13 @@ CREATE TABLE IF NOT EXISTS public.client_phone_number
 CREATE TABLE IF NOT EXISTS public.employee
 (
     id bigserial NOT NULL,
+    employee_type_id bigint NOT NULL,
     first_name character varying(255) COLLATE pg_catalog."default" NOT NULL,
     last_name character varying(255) COLLATE pg_catalog."default" NOT NULL,
     curp character varying(18) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT employee_pkey PRIMARY KEY (id)
+    status boolean NOT NULL DEFAULT TRUE,
+    CONSTRAINT employee_pkey PRIMARY KEY (id),
+    UNIQUE (curp)
 );
 
 CREATE TABLE IF NOT EXISTS public.employee_email
@@ -112,7 +115,7 @@ CREATE TABLE IF NOT EXISTS public.iot_device
 (
     id bigserial NOT NULL,
     serial_key character varying(23) COLLATE pg_catalog."default" NOT NULL,
-    status boolean NOT NULL DEFAULT false,
+    status boolean NOT NULL DEFAULT FALSE,
     CONSTRAINT iot_device_pkey PRIMARY KEY (id),
     CONSTRAINT iot_device_serial_key_key UNIQUE (serial_key)
 );
@@ -177,6 +180,13 @@ CREATE TABLE IF NOT EXISTS public.appointment_type
     PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS public.employee_type
+(
+    id bigserial NOT NULL,
+    name character varying(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+
 ALTER TABLE IF EXISTS public.account
     ADD CONSTRAINT account_client_id_fkey FOREIGN KEY (client_id)
     REFERENCES public.client (id) MATCH SIMPLE
@@ -188,13 +198,11 @@ CREATE INDEX IF NOT EXISTS account_pkey
 
 
 ALTER TABLE IF EXISTS public.account_security
-    ADD CONSTRAINT account_security_account_id_fkey FOREIGN KEY (account_id)
+    ADD FOREIGN KEY (account_client_id)
     REFERENCES public.account (client_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
-CREATE INDEX IF NOT EXISTS account_security_pkey
-    ON public.account_security(account_id);
 
 
 ALTER TABLE IF EXISTS public.appointment
@@ -249,6 +257,14 @@ ALTER TABLE IF EXISTS public.client_phone_number
     NOT VALID;
 CREATE INDEX IF NOT EXISTS client_phone_number_pkey
     ON public.client_phone_number(client_id);
+
+
+ALTER TABLE IF EXISTS public.employee
+    ADD FOREIGN KEY (employee_type_id)
+    REFERENCES public.employee_type (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 
 ALTER TABLE IF EXISTS public.employee_email
@@ -348,6 +364,7 @@ DROP TABLE IF EXISTS public.client_address CASCADE;
 DROP TABLE IF EXISTS public.client_email CASCADE;
 DROP TABLE IF EXISTS public.client_phone_number CASCADE;
 DROP TABLE IF EXISTS public.iot_device CASCADE;
+DROP TABLE IF EXISTS public.employee_type CASCADE;
 DROP TABLE IF EXISTS public.employee CASCADE;
 DROP TABLE IF EXISTS public.employee_email CASCADE;
 DROP TABLE IF EXISTS public.employee_phone_number CASCADE;

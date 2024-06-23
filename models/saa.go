@@ -9,7 +9,7 @@ type Saa struct {
 	IotDeviceID int64 `json:"iot_device_id"`
 }
 
-func CreateSaa(s *Saa) error {
+func (s *Saa) CreateSaa() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 

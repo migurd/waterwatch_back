@@ -14,7 +14,7 @@ type SaaRecord struct {
 	Date           time.Time `json:"date"`
 }
 
-func CreateSaaRecord(s *SaaRecord) error {
+func (s *SaaRecord) CreateSaaRecord() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 

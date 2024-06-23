@@ -7,7 +7,7 @@ type EmployeeEmail struct {
 	Email      string `json:"email"`
 }
 
-func CreateEmployeeEmail(e *EmployeeEmail) error {
+func (e *EmployeeEmail) CreateEmployeeEmail() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 

@@ -7,7 +7,7 @@ type AppointmentType struct {
 	Name string `json:"name"`
 }
 
-func CreateAppointmentType(c *AppointmentType) error {
+func (c *AppointmentType) CreateAppointmentType() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 

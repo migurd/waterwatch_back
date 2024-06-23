@@ -9,7 +9,7 @@ type Account struct {
 	Status   bool   `json:"status"`
 }
 
-func CreateAccount(a *Account) error {
+func (a *Account) CreateAccount() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 

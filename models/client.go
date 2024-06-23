@@ -55,3 +55,27 @@ func (c *Client) GetAllClients() ([]*Client, error) {
 	}
 	return clients, nil
 }
+
+func (c *Client) GetClientIDByEmail(email string) (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query :=
+		`SELECT * FROM client c
+		LEFT JOIN client_email ce
+		ON c.id = ce.client_id
+		WHERE ce.email = $1`
+
+	var client Client
+	row := db.QueryRowContext(
+		ctx,
+		query,
+		email,
+	)
+	row.Scan(
+		&client.ID,
+		&client.FirstName,
+		&client.LastName,
+	)
+	return client.ID, nil
+}

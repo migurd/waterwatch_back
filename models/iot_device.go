@@ -8,7 +8,7 @@ type IotDevice struct {
 	Status    bool   `json:"status"`
 }
 
-func CreateIotDevice(i *IotDevice) error {
+func (i *IotDevice) CreateIotDevice() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
@@ -26,4 +26,40 @@ func CreateIotDevice(i *IotDevice) error {
 		return err
 	}
 	return nil
+}
+
+func (i *IotDevice) UpdateIotDevice() error {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query :=
+		`UPDATE iot_device
+		SET status = ?
+		WHERE id = ?`
+
+	_, err := db.QueryContext(
+		ctx,
+		query,
+		i.Status,
+		i.ID,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (i *IotDevice) GetIotDeviceIDBySerialKey(serial_key string) (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query :=
+		`SELECT id FROM iot_device WHERE serial_key = ?`
+
+	var id int64
+	err := db.QueryRowContext(ctx, query, serial_key).Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
 }
