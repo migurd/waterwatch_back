@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/migurd/waterwatch_back/models"
@@ -61,18 +62,21 @@ func CreateClientAppointment(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	// create appointment
+	// choose employee to attend the client in an appoinment
 	appointment.ClientID = id
 	randomEmployee, err := employee.GetRandomActiveEmployee() // get random employee, might replace later TODO
 	if err != nil {
 		return err
 	}
 	appointment.EmployeeID = randomEmployee.ID
+
+	// send email to employee chosen with the appointment info
+
+	// create appointment
 	err = appointment.CreateAppointment()
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -90,7 +94,11 @@ func CompleteAppointment(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	err := json.NewDecoder(r.Body).Decode(&client_email) // id is saa types by now, then replaced
+	err = json.NewDecoder(r.Body).Decode(&client_email) // client_email.id holds saa_type id. BEWARE
+	if err != nil {
+		return err
+	}
+	err = json.NewDecoder(r.Body).Decode(&iot_device) // iot_device.id holds saa_type id. BEWARE
 	if err != nil {
 		return err
 	}
@@ -100,7 +108,7 @@ func CompleteAppointment(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	
+
 	// get already existent appointment
 	appointment.ClientID = client_id
 	err = appointment.GetAppointmentByClientID()
@@ -108,18 +116,51 @@ func CompleteAppointment(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
+	// enable iot device
+	// if serial key is found, then proceed
+	iot_device_id, err := iot_device.GetIotDeviceIDBySerialKey()
+	if err != nil {
+		return err
+	}
+	iot_device.ID = iot_device_id
+	is_iot_device_busy, err := iot_device.IsBusy()
+	if err != nil {
+		return err
+	}
+	if is_iot_device_busy {
+		return errors.New("IoT device busy")
+	}
+	iot_device.Status = true
+	iot_device.UpdateIotDevice()
+
 	// create saa type
 	saa_type.CreateSaaType()
 
 	// create saa
-	saa.
+	saa.ClientID = client_id
+	saa.IotDeviceID = iot_device_id
+	saa.SaaTypeID = saa_type.ID
 
 	// create saa description (default name)
-
-	// enable iot device
+	saa_description.Name = "Nombre por defecto"
+	saa_description.Description = "Descripción por defecto"
+	saa_description.CreateSaaDescription()
 
 	// if account doesn't exist, then create acccount and acc security
+	account.ClientID = client_id
+	does_account_exist, err := account.DoesAccountExist()
+	if err != nil {
+		return err
+	}
+	if !does_account_exist {
+		// create account and account security
+		account.CreateAccount()
+		account_security.AccountClientID = client_id
+		account_security.CreateAccountSecurity()
 
+		// send email to client of account created
+		// pray
+	}
 	return nil
 }
 

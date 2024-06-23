@@ -1,9 +1,11 @@
 package models
 
-import "context"
+import (
+	"context"
+)
 
 type Account struct {
-	UserID   int64  `json:"userid"`
+	ClientID int64  `json:"user_id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Status   bool   `json:"status"`
@@ -15,13 +17,13 @@ func (a *Account) CreateAccount() error {
 
 	query :=
 		`INSERT INTO account 
-		(user_id, username, password, status)
+		(client_id, username, password, status)
 		VALUES ($1, $2, $3, $4)`
 
 	_, err := db.QueryContext(
 		ctx,
 		query,
-		a.UserID,
+		a.ClientID,
 		a.Username,
 		a.Password,
 		a.Status,
@@ -30,4 +32,20 @@ func (a *Account) CreateAccount() error {
 		return err
 	}
 	return nil
+}
+
+func (a *Account) DoesAccountExist() (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query :=
+		`SELECT id FROM account WHERE id = ?`
+
+	var id int64
+	row := db.QueryRowContext(ctx, query, a.ClientID)
+	err := row.Scan(&id)
+	if err != nil { // if it doesn't return any row, then error
+		return false, nil
+	}
+	return true, nil
 }

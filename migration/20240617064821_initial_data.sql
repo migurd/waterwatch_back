@@ -39,6 +39,25 @@ INSERT INTO employee_phone_number (employee_id, country_code, phone_number) VALU
 INSERT INTO employee_phone_number (employee_id, country_code, phone_number) VALUES (3, '52', '3333333333');
 INSERT INTO employee_phone_number (employee_id, country_code, phone_number) VALUES (4, '52', '4444444444');
 
+-- Employee account details
+INSERT INTO employee_account (employee_id, username, password)
+VALUES (1, 'a', '123');
+INSERT INTO employee_account_security (employee_account_employee_id)
+VALUES (1);
+INSERT INTO employee_account (employee_id, username, password)
+VALUES (2, 'b', '123');
+INSERT INTO employee_account_security (employee_account_employee_id)
+VALUES (2);
+INSERT INTO employee_account (employee_id, username, password)
+VALUES (3, 'c', '123');
+INSERT INTO employee_account_security (employee_account_employee_id)
+VALUES (3);
+INSERT INTO employee_account (employee_id, username, password)
+VALUES (4, 'd', '123');
+INSERT INTO employee_account_security (employee_account_employee_id)
+VALUES (4);
+
+
 -- +goose StatementEnd
 
 -- +goose Down

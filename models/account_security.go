@@ -6,13 +6,14 @@ import (
 )
 
 type AccountSecurity struct {
-	AccountUserID           int64     `json:"account_user_id"`
+	AccountClientID         int64     `json:"account_client_id"`
 	Attempts                int       `json:"attempts"`
-	MaxAttempts             int       `json:"max_attempts"`
+	IsPasswordEncrypted     bool      `json:"is_password_encrypted"`
 	LastAttempt             time.Time `json:"last_attempt"`
 	LastTimePasswordChanged time.Time `json:"last_time_password_changed"`
-	IsPasswordEncrypted     bool      `json:"is_password_encrypted"`
 }
+
+var MAX_ATTEMPTS = 5
 
 func (a *AccountSecurity) CreateAccountSecurity() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
@@ -20,13 +21,13 @@ func (a *AccountSecurity) CreateAccountSecurity() error {
 
 	query :=
 		`INSERT INTO account_security
-		(account_user_id)
+		(account_client_id)
 		VALUES ($1)`
 
 	_, err := db.QueryContext(
 		ctx,
 		query,
-		a.AccountUserID,
+		a.AccountClientID,
 	)
 	if err != nil {
 		return err
