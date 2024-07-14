@@ -47,7 +47,7 @@ func main() {
 
 	app := &Application{
 		Config: cfg,
-		Models: models.New(dbConn.DB),
+		Models: models.New(dbConn.DB), // my homies and I love DI
 	}
 
 	err = app.Serve()

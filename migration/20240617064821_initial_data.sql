@@ -2,61 +2,102 @@
 -- +goose StatementBegin
 
 -- Appointment Type
-INSERT INTO appointment_type (name)
-VALUES ('CLIENTE');
-INSERT INTO appointment_type (name)
-VALUES ('MANTENIMIENTO');
+INSERT INTO appointment_type(name)
+VALUES('CLIENTE');
+INSERT INTO appointment_type(name)
+VALUES('MANTENIMIENTO');
 
 -- IoT Device
-INSERT INTO iot_device (serial_key) VALUES ('AAAAA-AAAAA-AAAAA');
-INSERT INTO iot_device (serial_key) VALUES ('BBBBB-BBBBB-BBBBB');
-INSERT INTO iot_device (serial_key) VALUES ('CCCCC-CCCCC-CCCCC');
-INSERT INTO iot_device (serial_key) VALUES ('XXXXX-XXXXX-XXXXX');
-INSERT INTO iot_device (serial_key) VALUES ('YYYYY-YYYYY-YYYYY');
-INSERT INTO iot_device (serial_key) VALUES ('ZZZZZ-ZZZZZ-ZZZZZ');
+INSERT INTO iot_device(serial_key) VALUES('AAAAA-AAAAA-AAAAA');
+INSERT INTO iot_device(serial_key) VALUES('BBBBB-BBBBB-BBBBB');
+INSERT INTO iot_device(serial_key) VALUES('CCCCC-CCCCC-CCCCC');
+INSERT INTO iot_device(serial_key) VALUES('XXXXX-XXXXX-XXXXX');
+INSERT INTO iot_device(serial_key) VALUES('YYYYY-YYYYY-YYYYY');
+INSERT INTO iot_device(serial_key) VALUES('ZZZZZ-ZZZZZ-ZZZZZ');
 
 -- Employee Type
-INSERT INTO employee_type (id, name) VALUES (1, 'INSTALADOR');
-INSERT INTO employee_type (id, name) VALUES (2, 'MANTENEDOR');
+INSERT INTO employee_type(id, name) VALUES(1, 'INSTALADOR');
+INSERT INTO employee_type(id, name) VALUES(2, 'MANTENEDOR');
+INSERT INTO employee_type(id, name) VALUES(3, 'INSTALADOR Y MANTENEDOR');
 
 -- Employee
-INSERT INTO employee (id, employee_type_id, first_name, last_name, curp, status)
-VALUES (1, (SELECT id FROM employee_type WHERE name = 'INSTALADOR'), 'Instalador', 'Num 1', 'AAAAAAAAAAAAAAAAAA', TRUE);
-INSERT INTO employee (id, employee_type_id, first_name, last_name, curp, status)
-VALUES (2, (SELECT id FROM employee_type WHERE name = 'INSTALADOR'), 'Instalador', 'Num 2', 'BBBBBBBBBBBBBBBBBB', TRUE);
-INSERT INTO employee (id, employee_type_id, first_name, last_name, curp, status)
-VALUES (3, (SELECT id FROM employee_type WHERE name = 'MANTENEDOR'), 'Mantenedor', 'Num 1', 'CCCCCCCCCCCCCCCCCC', TRUE);
-INSERT INTO employee (id, employee_type_id, first_name, last_name, curp, status)
-VALUES (4, (SELECT id FROM employee_type WHERE name = 'MANTENEDOR'), 'Mantenedor', 'Num 2', 'DDDDDDDDDDDDDDDDDD', TRUE);
+INSERT INTO employee(id, employee_type_id, first_name, last_name, curp, status)
+VALUES(1,(SELECT id FROM employee_type WHERE name = 'INSTALADOR'), 'Instalador', 'Num 1', 'AAAAAAAAAAAAAAAAAA', TRUE);
+INSERT INTO employee(id, employee_type_id, first_name, last_name, curp, status)
+VALUES(2,(SELECT id FROM employee_type WHERE name = 'INSTALADOR'), 'Instalador', 'Num 2', 'BBBBBBBBBBBBBBBBBB', TRUE);
+INSERT INTO employee(id, employee_type_id, first_name, last_name, curp, status)
+VALUES(3,(SELECT id FROM employee_type WHERE name = 'MANTENEDOR'), 'Mantenedor', 'Num 1', 'CCCCCCCCCCCCCCCCCC', TRUE);
+INSERT INTO employee(id, employee_type_id, first_name, last_name, curp, status)
+VALUES(4,(SELECT id FROM employee_type WHERE name = 'MANTENEDOR'), 'Mantenedor', 'Num 2', 'DDDDDDDDDDDDDDDDDD', TRUE);
+INSERT INTO employee(id, employee_type_id, first_name, last_name, curp, status)
+VALUES(5,(SELECT id FROM employee_type WHERE name = 'INSTALADOR Y MANTENEDOR'), 'Todólogo', 'Num 1', 'EEEEEEEEEEEEEEEEEE', TRUE);
+INSERT INTO employee(id, employee_type_id, first_name, last_name, curp, status)
+VALUES(6,(SELECT id FROM employee_type WHERE name = 'INSTALADOR Y MANTENEDOR'), 'Todólogo', 'Num 2', 'FFFFFFFFFFFFFFFFFF', TRUE);
 
 -- Employee email & phone number
-INSERT INTO employee_email (employee_id, email) VALUES (1, 'a@gmail.com');
-INSERT INTO employee_email (employee_id, email) VALUES (2, 'b@gmail.com');
-INSERT INTO employee_email (employee_id, email) VALUES (3, 'c@gmail.com');
-INSERT INTO employee_email (employee_id, email) VALUES (4, 'd@gmail.com');
-INSERT INTO employee_phone_number (employee_id, country_code, phone_number) VALUES (1, '52', '1111111111');
-INSERT INTO employee_phone_number (employee_id, country_code, phone_number) VALUES (2, '52', '2222222222');
-INSERT INTO employee_phone_number (employee_id, country_code, phone_number) VALUES (3, '52', '3333333333');
-INSERT INTO employee_phone_number (employee_id, country_code, phone_number) VALUES (4, '52', '4444444444');
+INSERT INTO employee_email(employee_id, email) VALUES(1, 'a@gmail.com');
+INSERT INTO employee_email(employee_id, email) VALUES(2, 'b@gmail.com');
+INSERT INTO employee_email(employee_id, email) VALUES(3, 'c@gmail.com');
+INSERT INTO employee_email(employee_id, email) VALUES(4, 'd@gmail.com');
+INSERT INTO employee_email(employee_id, email) VALUES(5, 'e@gmail.com');
+INSERT INTO employee_email(employee_id, email) VALUES(6, 'f@gmail.com');
+INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(1, '52', '1111111111');
+INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(2, '52', '2222222222');
+INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(3, '52', '3333333333');
+INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(4, '52', '4444444444');
+INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(5, '52', '5555555555');
+INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(6, '52', '6666666666');
 
--- Employee account details
-INSERT INTO employee_account (employee_id, username, password)
-VALUES (1, 'a', '123');
-INSERT INTO employee_account_security (employee_account_employee_id)
-VALUES (1);
-INSERT INTO employee_account (employee_id, username, password)
-VALUES (2, 'b', '123');
-INSERT INTO employee_account_security (employee_account_employee_id)
-VALUES (2);
-INSERT INTO employee_account (employee_id, username, password)
-VALUES (3, 'c', '123');
-INSERT INTO employee_account_security (employee_account_employee_id)
-VALUES (3);
-INSERT INTO employee_account (employee_id, username, password)
-VALUES (4, 'd', '123');
-INSERT INTO employee_account_security (employee_account_employee_id)
-VALUES (4);
+-- Employee account
+INSERT INTO employee_account(employee_id, username, password)
+VALUES(1, 'a', '123');
+INSERT INTO employee_account(employee_id, username, password)
+VALUES(2, 'b', '123');
+INSERT INTO employee_account(employee_id, username, password)
+VALUES(3, 'c', '123');
+INSERT INTO employee_account(employee_id, username, password)
+VALUES(4, 'd', '123');
 
+-- Employee account security
+INSERT INTO employee_account_security(employee_account_employee_id)
+VALUES(1);
+INSERT INTO employee_account_security(employee_account_employee_id)
+VALUES(2);
+INSERT INTO employee_account_security(employee_account_employee_id)
+VALUES(3);
+INSERT INTO employee_account_security(employee_account_employee_id)
+VALUES(4);
+
+-- client
+INSERT INTO client(id, first_name, last_name)
+VALUES(1, 'Angel', 'Qui');
+
+INSERT INTO client_address(id, client_id, "state", city, street, house_number, neighborhood, postal_code)
+VALUES(1, 1, 'Sinaloa', 'Mazatlán', 'Calle Pepito', '2222', 'Venadillo', '60060');
+
+INSERT INTO client_phone_number(client_id, country_code, phone_number)
+VALUES(1, '52', '9999999999');
+
+INSERT INTO client_email(client_id, email)
+VALUES(1, 'angel@gmail.com');
+
+INSERT INTO account(client_id, username, "password", "status")
+VALUES(1, 'angelqui', '123', TRUE);
+
+INSERT INTO account_security(account_client_id, is_password_encrypted)
+VALUES(1, FALSE);
+
+-- enable first SAA for testing
+INSERT INTO saa_type(id, "name", "description", capacity, diameter, height)
+VALUES(1, 'TINACO TRICAPA 1100 L EQUIPADO', 'Tinaco Sistema Mejor Agua (SMA) 1100 L Equipado Rotoplas fabricado con polietileno lineal de baja densidad, color beige por fuera y blanco por dentro.', 1100, 110, 137);
+
+UPDATE iot_device SET "status" = TRUE WHERE serial_key = 'AAAAA-AAAAA-AAAAA';
+
+INSERT INTO saa(id, address_id, saa_type_id, iot_device_id)
+VALUES(1, 1, 1, 1);
+
+INSERT INTO saa_description(saa_id, "name", "description")
+VALUES(1, 'Tinaco 1', 'Tinaco que está en el techo de mi abuelita Pancha');
 
 -- +goose StatementEnd
 

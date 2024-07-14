@@ -28,6 +28,20 @@ func (c *ClientEmail) CreateClientEmail() error {
 	return nil
 }
 
+func (c *ClientEmail) CheckClientEmail() (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query := `SELECT check_client_email_exists($1)`
+
+	var is_repeated bool
+	err := db.QueryRowContext(ctx, query, c.Email).Scan(&is_repeated)
+	if err != nil {
+		return false, err
+	}
+	return is_repeated, nil
+}
+
 func (c *ClientEmail) GetClientEmailIDByEmail() (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()

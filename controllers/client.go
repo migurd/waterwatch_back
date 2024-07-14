@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/migurd/waterwatch_back/helpers"
@@ -9,9 +11,35 @@ import (
 
 func CreateClient(w http.ResponseWriter, r *http.Request) error {
 	var client models.Client
-	_, err := client.CreateClient()
+	
+	// get vars from Content-Type
+	err := json.NewDecoder(r.Body).Decode(&client)
 	if err != nil {
 		return err
+	}
+
+	// create client
+	client.ID, err = client.CreateClient()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CheckClientEmail(w http.ResponseWriter, r *http.Request) error {
+	var client_email models.ClientEmail
+	err := json.NewDecoder(r.Body).Decode(&client_email)
+	if err != nil {
+		return err
+	}
+
+	is_repeated, err := client_email.CheckClientEmail()
+	if err != nil {
+		return err
+	}
+	if is_repeated {
+		return fmt.Errorf("correo ya regisrado")
 	}
 
 	return nil
