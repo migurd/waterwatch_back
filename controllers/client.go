@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/migurd/waterwatch_back/helpers"
 	"github.com/migurd/waterwatch_back/models"
@@ -127,27 +128,19 @@ func (c *Controllers) ClientLogin(w http.ResponseWriter, r *http.Request) error 
 		return err
 	}
 
-	// check if the pass must be encrypted
-	// var accountSecurity models.AccountSecurity
-	// is_encrypted, err := accountSecurity.CheckIsPasswordEncrypted(account.Username)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// encrypt pass
-	// if is_encrypted {
-	// 	hashedPassword, err := services.HashPassword(account.Password)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	account.Password = hashedPassword
-	// }
-
 	// if no error, then password and user correct
 	token, err := account.Login()
 	if err != nil {
 		return err
 	}
+
+	// Optionally, set the token as an HTTP-only cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     "token",
+		Value:    token,
+		Expires:  time.Now().Add(24 * time.Hour),
+		HttpOnly: true,
+	})
 
 	message := fmt.Sprintf("Started session as %s successfully.", account.Username)
 	helpers.WriteJSON(w, http.StatusOK, helpers.Response{Message: message, Token: token})

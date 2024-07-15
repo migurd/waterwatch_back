@@ -17,17 +17,47 @@ func Routes(controllers *controllers.Controllers) *mux.Router {
 		fmt.Fprintf(w, "Hi, world!")
 	})
 
-	// client sign up process
+	// ================
+	// client sign up & login process
 	router.HandleFunc("/check-client-email", helpers.MakeHTTPHandleFunc(controllers.CheckClientEmail)).Methods("POST")
 	router.HandleFunc("/client-register", helpers.MakeHTTPHandleFunc(controllers.CreateClient)).Methods("POST")
 	router.HandleFunc("/client-login", helpers.MakeHTTPHandleFunc(controllers.ClientLogin)).Methods("POST")
 
-	// only a specific group of people or devices sholud be able to do this
-	// router.HandleFunc("/create_employee", helpers.MakeHTTPHandleFunc(controllers.CreateEmployee)).Methods("POST")
-	// router.HandleFunc("/complete_appointment", helpers.MakeHTTPHandleFunc(controllers.CompleteAppointment)).Methods("POST")
+	// TODO
+	// already logged in user
+	// --> create-appointment
+	// --> update-appoinment
+	// --> cancel-appoinment
+	// --> create-address
+	// --> update-address
+	// --> delete-address
+	// --> get appointments of user
 
-	// // all public
-	// router.HandleFunc("/create_client_appointment", helpers.MakeHTTPHandleFunc(controllers.CreateClientAppointment)).Methods("POST")
-	// router.HandleFunc("/create_client_appointment_with_appointment", helpers.MakeHTTPHandleFunc(controllers.CreateClientAppointment)).Methods("POST")
+	// ================
+	// employee register & login process
+	// --> register (probably no)
+	// --> login
+
+	// already logged in client
+	// --> get appointments assigned to them
+	// --> get appointments that haven't been assigned to an employee and fit to their role
+	// --> update cancel assigned appointment
+	// --> based on employee type
+	//				--> post complete installation
+	//				--> post complete maintenance
+
+	// ================
+	// IoT Device
+	// --> post saa_record using serial_key
+
+	// ================
+	// mobile home based on the user
+	// --> get view home (kind of all client tables)
+	// --> get view saa all
+	// --> get view saa specific
+	// --> update saa specific name and description
+	// --> get view contact
+	// --> get view saa_maintenance all
+
 	return router
 }
