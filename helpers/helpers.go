@@ -19,6 +19,10 @@ type ApiError struct {
 	Error string `json:"error"`
 }
 
+type Success struct {
+	Message string `json:"message"`
+}
+
 func MakeHTTPHandleFunc(f ApiFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := f(w, r); err != nil {

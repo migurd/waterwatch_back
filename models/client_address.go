@@ -1,6 +1,9 @@
 package models
 
-import "context"
+import (
+	"context"
+	"database/sql"
+)
 
 type ClientAddress struct {
 	ClientID     int64  `json:"client_id"`
@@ -12,29 +15,26 @@ type ClientAddress struct {
 	PostalCode   string `json:"postal_code"`
 }
 
-func (c *ClientAddress) CreateClientAddress() error {
-	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
-	defer cancel()
+func (c *ClientAddress) CreateClientAddress(tx *sql.Tx) error {
+  ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+  defer cancel()
 
-	query :=
-		`INSERT INTO client_address 
-		(client_id, state, city, street, house_number, neighborhood, postal_code)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)`
+  query := `
+    INSERT INTO client_address 
+    (client_id, state, city, street, house_number, neighborhood, postal_code)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)`
 
-	_, err := db.QueryContext(
-		ctx,
-		query,
-		c.ClientID,
-		c.State,
-		c.City,
-		c.Street,
-		c.HouseNumber,
-		c.Neighborhood,
-		c.PostalCode,
-	)
-	if err != nil {
-		return err
-	}
+  var err error
+  if tx != nil {
+    _, err = tx.ExecContext(ctx, query, c.ClientID, c.State, c.City, c.Street, c.HouseNumber, c.Neighborhood, c.PostalCode)
+  } else {
+    _, err = db.ExecContext(ctx, query, c.ClientID, c.State, c.City, c.Street, c.HouseNumber, c.Neighborhood, c.PostalCode)
+  }
 
-	return nil
+  if err != nil {
+    return err
+  }
+
+  return nil
 }
+

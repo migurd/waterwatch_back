@@ -1,6 +1,9 @@
 package models
 
-import "context"
+import (
+	"context"
+	"database/sql"
+)
 
 type Client struct {
 	ID        int64  `json:"id"`
@@ -8,7 +11,7 @@ type Client struct {
 	LastName  string `json:"last_name"`
 }
 
-func (c *Client) CreateClient() (int64, error) {
+func (c *Client) CreateClient(tx *sql.Tx) (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
@@ -19,10 +22,16 @@ func (c *Client) CreateClient() (int64, error) {
 		RETURNING id`
 
 	var id int64
-	err := db.QueryRowContext(
-		ctx, query, c.FirstName, c.LastName).Scan(&id)
+	var err error
+
+  if tx != nil {
+    err = tx.QueryRowContext(ctx, query, c.FirstName, c.LastName).Scan(&id)
+  } else {
+    err = db.QueryRowContext(ctx, query, c.FirstName, c.LastName).Scan(&id)
+  }
+
 	if err != nil {
-		return 0, err
+		return 0, nil
 	}
 
 	return id, nil

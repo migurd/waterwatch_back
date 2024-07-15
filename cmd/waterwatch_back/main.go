@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/migurd/waterwatch_back/controllers"
 	"github.com/migurd/waterwatch_back/database"
 	"github.com/migurd/waterwatch_back/models"
 	"github.com/migurd/waterwatch_back/router"
@@ -18,6 +19,7 @@ type Config struct {
 type Application struct {
 	Config Config
 	Models models.Models
+	Controllers controllers.Controllers
 }
 
 var port = os.Getenv("PORT")
@@ -27,7 +29,7 @@ func (app *Application) Serve() error {
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", app.Config.Port),
-		Handler: router.Routes(),
+		Handler: router.Routes(&app.Controllers),
 	}
 
 	return srv.ListenAndServe()
@@ -45,9 +47,13 @@ func main() {
 
 	defer dbConn.DB.Close()
 
+	models := models.New(dbConn.DB)
+  controllers := controllers.New(dbConn.DB)
+
 	app := &Application{
 		Config: cfg,
-		Models: models.New(dbConn.DB), // my homies and I love DI
+		Models: models, // my homies and I love DI
+		Controllers: controllers,
 	}
 
 	err = app.Serve()

@@ -9,7 +9,7 @@ import (
 	"github.com/migurd/waterwatch_back/helpers"
 )
 
-func Routes() http.Handler {
+func Routes(controllers *controllers.Controllers) *mux.Router {
 	router := mux.NewRouter()
 
 	// test
@@ -18,15 +18,16 @@ func Routes() http.Handler {
 	})
 
 	// client sign up process
-	router.HandleFunc("/check_client_email", helpers.MakeHTTPHandleFunc(controllers.CheckClientEmail)).Methods("POST")
-	router.HandleFunc("/create_client", helpers.MakeHTTPHandleFunc(controllers.CreateClient)).Methods("POST")
+	router.HandleFunc("/check-client-email", helpers.MakeHTTPHandleFunc(controllers.CheckClientEmail)).Methods("POST")
+	router.HandleFunc("/client-register", helpers.MakeHTTPHandleFunc(controllers.CreateClient)).Methods("POST")
+	router.HandleFunc("/client-login", helpers.MakeHTTPHandleFunc(controllers.ClientLogin)).Methods("POST")
 
 	// only a specific group of people or devices sholud be able to do this
-	router.HandleFunc("/create_employee", helpers.MakeHTTPHandleFunc(controllers.CreateEmployee)).Methods("POST")
-	router.HandleFunc("/complete_appointment", helpers.MakeHTTPHandleFunc(controllers.CompleteAppointment)).Methods("POST")
+	// router.HandleFunc("/create_employee", helpers.MakeHTTPHandleFunc(controllers.CreateEmployee)).Methods("POST")
+	// router.HandleFunc("/complete_appointment", helpers.MakeHTTPHandleFunc(controllers.CompleteAppointment)).Methods("POST")
 
-	// all public
-	router.HandleFunc("/create_client_appointment", helpers.MakeHTTPHandleFunc(controllers.CreateClientAppointment)).Methods("POST")
+	// // all public
+	// router.HandleFunc("/create_client_appointment", helpers.MakeHTTPHandleFunc(controllers.CreateClientAppointment)).Methods("POST")
 	// router.HandleFunc("/create_client_appointment_with_appointment", helpers.MakeHTTPHandleFunc(controllers.CreateClientAppointment)).Methods("POST")
 	return router
 }

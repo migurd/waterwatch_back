@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
 
@@ -15,20 +16,22 @@ type AccountSecurity struct {
 
 var MAX_ATTEMPTS = 5
 
-func (a *AccountSecurity) CreateAccountSecurity() error {
+func (as *AccountSecurity) CreateAccountSecurity(tx *sql.Tx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
-	query :=
-		`INSERT INTO account_security
-		(account_client_id)
-		VALUES ($1)`
+	query := `
+    INSERT INTO account_security
+    (account_client_id)
+    VALUES ($1)`
 
-	_, err := db.QueryContext(
-		ctx,
-		query,
-		a.AccountClientID,
-	)
+	var err error
+	if tx != nil {
+		_, err = tx.ExecContext(ctx, query, as.AccountClientID)
+	} else {
+		_, err = db.ExecContext(ctx, query, as.AccountClientID)
+	}
+
 	if err != nil {
 		return err
 	}

@@ -1,6 +1,9 @@
 package models
 
-import "context"
+import (
+	"context"
+	"database/sql"
+)
 
 type ClientPhoneNumber struct {
 	ClientID    int64  `json:"client_id"`
@@ -8,22 +11,22 @@ type ClientPhoneNumber struct {
 	PhoneNumber string `json:"phone_number"`
 }
 
-func (c *ClientPhoneNumber) CreateClientPhoneNumber() error {
+func (cpn *ClientPhoneNumber) CreateClientPhoneNumber(tx *sql.Tx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
-	query :=
-		`INSERT INTO client_phone_number
-		(client_id, country_code, phone_number)
-		VALUES ($1, $2, $3)`
+	query := `
+    INSERT INTO client_phone_number
+    (client_id, country_code, phone_number)
+    VALUES ($1, $2, $3)`
 
-	_, err := db.QueryContext(
-		ctx,
-		query,
-		c.ClientID,
-		c.CountryCode,
-		c.PhoneNumber,
-	)
+	var err error
+	if tx != nil {
+		_, err = tx.ExecContext(ctx, query, cpn.ClientID, cpn.CountryCode, cpn.PhoneNumber)
+	} else {
+		_, err = db.ExecContext(ctx, query, cpn.ClientID, cpn.CountryCode, cpn.PhoneNumber)
+	}
+
 	if err != nil {
 		return err
 	}

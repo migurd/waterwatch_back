@@ -1,27 +1,31 @@
 package models
 
-import "context"
+import (
+	"context"
+	"database/sql"
+)
 
 type ClientEmail struct {
 	ClientID int64  `json:"client_id"`
 	Email    string `json:"email"`
 }
 
-func (c *ClientEmail) CreateClientEmail() error {
+func (ce *ClientEmail) CreateClientEmail(tx *sql.Tx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
-	query :=
-		`INSERT INTO client_email
-		(client_id, email)
-		VALUES ($1, $2)`
+	query := `
+    INSERT INTO client_email
+    (client_id, email)
+    VALUES ($1, $2)`
 
-	_, err := db.QueryContext(
-		ctx,
-		query,
-		c.ClientID,
-		c.Email,
-	)
+	var err error
+	if tx != nil {
+		_, err = tx.ExecContext(ctx, query, ce.ClientID, ce.Email)
+	} else {
+		_, err = db.ExecContext(ctx, query, ce.ClientID, ce.Email)
+	}
+
 	if err != nil {
 		return err
 	}

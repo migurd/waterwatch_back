@@ -41,7 +41,7 @@ func CreateClientAppointment(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// CREATE CLIENT!!!!
-	id, err := client.CreateClient()
+	id, err := client.CreateClient(nil)
 	if err != nil {
 		return err
 	}
@@ -49,15 +49,15 @@ func CreateClientAppointment(w http.ResponseWriter, r *http.Request) error {
 	client_address.ClientID = id
 	client_email.ClientID = id
 	client_phone_number.ClientID = id
-	err = client_address.CreateClientAddress()
+	err = client_address.CreateClientAddress(nil)
 	if err != nil {
 		return err
 	}
-	err = client_email.CreateClientEmail()
+	err = client_email.CreateClientEmail(nil)
 	if err != nil {
 		return err
 	}
-	err = client_phone_number.CreateClientPhoneNumber()
+	err = client_phone_number.CreateClientPhoneNumber(nil)
 	if err != nil {
 		return err
 	}
@@ -154,9 +154,9 @@ func CompleteAppointment(w http.ResponseWriter, r *http.Request) error {
 	}
 	if !does_account_exist {
 		// create account and account security
-		account.CreateAccount()
+		account.CreateAccount(nil)
 		account_security.AccountClientID = client_id
-		account_security.CreateAccountSecurity()
+		account_security.CreateAccountSecurity(nil)
 
 		// send email to client of account created
 		// pray

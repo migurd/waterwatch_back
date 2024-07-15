@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS public.account
     client_id bigint NOT NULL,
     username character varying(255) COLLATE pg_catalog."default" NOT NULL,
     password character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    status boolean DEFAULT false,
+    status boolean DEFAULT true,
     CONSTRAINT account_pkey PRIMARY KEY (client_id),
     CONSTRAINT account_username_key UNIQUE (username)
 );
