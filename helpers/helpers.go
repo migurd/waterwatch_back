@@ -19,8 +19,9 @@ type ApiError struct {
 	Error string `json:"error"`
 }
 
-type Success struct {
+type Response struct {
 	Message string `json:"message"`
+	Token   string `json:"token"`
 }
 
 func MakeHTTPHandleFunc(f ApiFunc) http.HandlerFunc {

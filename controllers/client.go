@@ -8,6 +8,7 @@ import (
 
 	"github.com/migurd/waterwatch_back/helpers"
 	"github.com/migurd/waterwatch_back/models"
+	"github.com/migurd/waterwatch_back/services"
 )
 
 func (c *Controllers) CreateClient(w http.ResponseWriter, r *http.Request) error {
@@ -53,6 +54,14 @@ func (c *Controllers) CreateClient(w http.ResponseWriter, r *http.Request) error
 		len(clientAddress.State) == 0 || len(clientAddress.Neighborhood) == 0 || len(clientAddress.PostalCode) == 0 {
 		return fmt.Errorf("rellena todos los campos para crear una cuenta, por favor")
 	}
+
+	// hash the password
+	hashedPassword, err := services.HashPassword(account.Password)
+	if err != nil {
+		return err
+	}
+	account.Password = hashedPassword
+	accountSecurity.IsPasswordEncrypted = true
 
 	// Start a transaction
 	tx, err := db.Begin()
@@ -100,8 +109,14 @@ func (c *Controllers) CreateClient(w http.ResponseWriter, r *http.Request) error
 		return err
 	}
 
+	// Generate JWT after successful transaction commit
+	token, err := services.GenerateJWT(account.Username)
+	if err != nil {
+		return err
+	}
+
 	message := fmt.Sprintf("Client %s created!", account.Username)
-	helpers.WriteJSON(w, http.StatusCreated, helpers.Success{Message: message})
+	helpers.WriteJSON(w, http.StatusCreated, helpers.Response{Message: message, Token: token})
 	return nil
 }
 
@@ -112,14 +127,30 @@ func (c *Controllers) ClientLogin(w http.ResponseWriter, r *http.Request) error 
 		return err
 	}
 
-	is_correct, err := account.Login()
+	// check if the pass must be encrypted
+	// var accountSecurity models.AccountSecurity
+	// is_encrypted, err := accountSecurity.CheckIsPasswordEncrypted(account.Username)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// encrypt pass
+	// if is_encrypted {
+	// 	hashedPassword, err := services.HashPassword(account.Password)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// 	account.Password = hashedPassword
+	// }
+
+	// if no error, then password and user correct
+	token, err := account.Login()
 	if err != nil {
 		return err
 	}
-	if is_correct {
-		helpers.WriteJSON(w, http.StatusOK, "Epic")
-	}
 
+	message := fmt.Sprintf("Started session as %s successfully.", account.Username)
+	helpers.WriteJSON(w, http.StatusOK, helpers.Response{Message: message, Token: token})
 	return nil
 }
 

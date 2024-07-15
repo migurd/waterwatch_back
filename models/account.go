@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/migurd/waterwatch_back/services"
 )
 
 type Account struct {
@@ -35,7 +37,7 @@ func (a *Account) CreateAccount(tx *sql.Tx) error {
 	return nil
 }
 
-func (a *Account) Login() (bool, error) {
+func (a *Account) Login() (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
@@ -51,7 +53,7 @@ func (a *Account) Login() (bool, error) {
 			// No rows were returned, so we assume an actual username was sent
 		} else {
 			// An error occurred during query execution
-			return false, err
+			return "", err
 		}
 	}
 
@@ -62,23 +64,48 @@ func (a *Account) Login() (bool, error) {
 	err = db.QueryRowContext(ctx, query, a.Username).Scan(&dbAccount.Username, &dbAccount.Password)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return false, fmt.Errorf("username/email not found")
+			return "", fmt.Errorf("username/email not found")
 		}
-		return false, err
+		return "", err
 	}
 
-	// check if passwords match
-	if a.Password != dbAccount.Password {
-		_, err = db.ExecContext(ctx, `CALL inrease_attempt_client_account($1)`, a.Username)
-		if err != nil {
-			return false, err
-		}
-		return false, fmt.Errorf("password is incorrect")
+	// Increase attempts
+	_, err = db.ExecContext(ctx, `CALL increase_attempts_client($1)`, a.Username)
+	if err != nil {
+		return "", err
 	}
 
-	
+	// Check if password is encrypted or not
+	var accountSecurity AccountSecurity
+	is_encrypted, err := accountSecurity.CheckIsPasswordEncrypted(a.Username)
+	if err != nil {
+		return "", err
+	}
 
-	return false, nil
+	// Check if passwords match
+	if !is_encrypted {
+		if a.Password != dbAccount.Password {
+			return "", fmt.Errorf("password is incorrect")
+		}
+	} else {
+		if !services.CheckPasswordHash(a.Password, dbAccount.Password) {
+			return "", fmt.Errorf("password is incorrect")
+		}
+	}
+
+	// It was successfull! reset count of attempts
+	_, err = db.ExecContext(ctx, `CALL reset_attempts_client($1)`, a.Username)
+	if err != nil {
+		return "", err
+	}
+
+	// Generate JWT Token
+	token, err := services.GenerateJWT(a.Username)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
 
 func (a *Account) DoesAccountExist() (bool, error) {

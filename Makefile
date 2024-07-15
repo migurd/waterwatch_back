@@ -27,3 +27,5 @@ migrate-up:
 
 migrate-down:
 	@cd migration && goose postgres "host=localhost user=$$DB_USER dbname=$$DB_NAME password=$$DB_PASSWORD sslmode=disable" down-to 0 && cd ..
+
+migrate-restart: migrate-down migrate-up
