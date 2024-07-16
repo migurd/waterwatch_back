@@ -64,6 +64,36 @@ func (i *IotDevice) GetIotDeviceIDBySerialKey() (int64, error) {
 	return id, nil
 }
 
+func (i *IotDevice) GetIotDeviceStatus() (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query := `SELECT status FROM iot_device WHERE serial_key = $1`
+
+	var status bool
+	err := db.QueryRowContext(ctx, query, i.SerialKey).Scan(&status)
+	if err != nil {
+		return false, err
+	}
+
+	return status, nil
+}
+
+func (i *IotDevice) GetSaaIDBySerialKey() (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query := `SELECT get_saa_id_by_serial_key($1)`
+
+	var saa_id int64
+	err := db.QueryRowContext(ctx, query, i.SerialKey).Scan(&saa_id)
+	if err != nil {
+		return 0, err
+	}
+
+	return saa_id, nil
+}
+
 func (i *IotDevice) IsBusy() (bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()

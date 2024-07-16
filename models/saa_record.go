@@ -30,10 +30,41 @@ func (s *SaaRecord) CreateSaaRecord() error {
 		s.WaterLevel,
 		s.PhLevel,
 		s.IsContaminated,
-		s.Date,
+		time.Now(),
 	)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (s *SaaRecord) GetAllSaaRecordsBySaaID() ([]*SaaRecord, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query := `SELECT * FROM saa_record WHERE saa_id = $1`
+
+	rows, err := db.QueryContext(ctx, query, s.SaaID)
+	if err != nil {
+		return nil, err
+	}
+
+	var saaRecords []*SaaRecord
+	for rows.Next() {
+		var saaRecord SaaRecord
+		err := rows.Scan(
+			&saaRecord.ID,
+			&saaRecord.SaaID,
+			&saaRecord.WaterLevel,
+			&saaRecord.PhLevel,
+			&saaRecord.IsContaminated,
+			&saaRecord.Date,
+		)
+		if err != nil {
+			return nil, err
+		}
+		saaRecords = append(saaRecords, &saaRecord)
+	}
+
+	return saaRecords, nil
 }

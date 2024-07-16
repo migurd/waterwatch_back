@@ -24,11 +24,11 @@ func (c *Client) CreateClient(tx *sql.Tx) (int64, error) {
 	var id int64
 	var err error
 
-  if tx != nil {
-    err = tx.QueryRowContext(ctx, query, c.FirstName, c.LastName).Scan(&id)
-  } else {
-    err = db.QueryRowContext(ctx, query, c.FirstName, c.LastName).Scan(&id)
-  }
+	if tx != nil {
+		err = tx.QueryRowContext(ctx, query, c.FirstName, c.LastName).Scan(&id)
+	} else {
+		err = db.QueryRowContext(ctx, query, c.FirstName, c.LastName).Scan(&id)
+	}
 
 	if err != nil {
 		return 0, nil

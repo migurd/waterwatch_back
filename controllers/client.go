@@ -163,10 +163,10 @@ func (c *Controllers) CheckClientEmail(w http.ResponseWriter, r *http.Request) e
 		return err
 	}
 	if is_repeated {
-		helpers.WriteJSON(w, http.StatusOK, true)
+		helpers.WriteJSON(w, http.StatusBadRequest, true) // it exists
+	} else {
+		helpers.WriteJSON(w, http.StatusOK, false)
 	}
-
-	helpers.WriteJSON(w, http.StatusOK, false)
 	return nil
 }
 

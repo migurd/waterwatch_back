@@ -49,6 +49,9 @@ func Routes(controllers *controllers.Controllers) *mux.Router {
 	// ================
 	// IoT Device
 	// --> post saa_record using serial_key
+	// --> gett all saa_record using serial_key
+	router.HandleFunc("/create-saa-record", helpers.MakeHTTPHandleFunc(controllers.CreateSaaRecord)).Methods("POST")
+	router.HandleFunc("/get-saa-records", helpers.MakeHTTPHandleFunc(controllers.GetSaaRecords)).Methods("GET")
 
 	// ================
 	// mobile home based on the user
