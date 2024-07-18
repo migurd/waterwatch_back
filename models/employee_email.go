@@ -1,13 +1,16 @@
 package models
 
-import "context"
+import (
+	"context"
+	"database/sql"
+)
 
 type EmployeeEmail struct {
 	EmployeeID int64  `json:"employee_id"`
 	Email      string `json:"email"`
 }
 
-func (e *EmployeeEmail) CreateEmployeeEmail() error {
+func (e *EmployeeEmail) CreateEmployeeEmail(tx *sql.Tx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
@@ -16,14 +19,15 @@ func (e *EmployeeEmail) CreateEmployeeEmail() error {
 		(employee_id, email)
 		VALUES ($1, $2)`
 
-	_, err := db.QueryContext(
-		ctx,
-		query,
-		e.EmployeeID,
-		e.Email,
-	)
+	var err error
+	if tx != nil {
+		_, err = tx.QueryContext(ctx, query, e.EmployeeID, e.Email)
+	} else {
+		_, err = db.QueryContext(ctx, query, e.EmployeeID, e.Email)
+	}
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

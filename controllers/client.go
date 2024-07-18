@@ -111,7 +111,7 @@ func (c *Controllers) CreateClient(w http.ResponseWriter, r *http.Request) error
 	}
 
 	// Generate JWT after successful transaction commit
-	token, err := services.GenerateJWT(account.Username)
+	token, err := services.GenerateJWT(client.ID, account.Username)
 	if err != nil {
 		return err
 	}

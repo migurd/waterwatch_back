@@ -100,7 +100,7 @@ func (a *Account) Login() (string, error) {
 	}
 
 	// Generate JWT Token
-	token, err := services.GenerateJWT(a.Username)
+	token, err := services.GenerateJWT(a.ClientID, a.Username)
 	if err != nil {
 		return "", err
 	}

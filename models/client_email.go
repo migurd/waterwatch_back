@@ -46,7 +46,7 @@ func (c *ClientEmail) CheckClientEmail() (bool, error) {
 	return is_repeated, nil
 }
 
-func (c *ClientEmail) GetClientEmailIDByEmail() (int64, error) {
+func (c *ClientEmail) GetClientIDByEmail() (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 

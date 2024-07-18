@@ -1,6 +1,9 @@
 package models
 
-import "context"
+import (
+	"context"
+	"database/sql"
+)
 
 type IotDevice struct {
 	ID        int64  `json:"id"`
@@ -28,24 +31,25 @@ func (i *IotDevice) CreateIotDevice() error {
 	return nil
 }
 
-func (i *IotDevice) UpdateIotDevice() error {
+func (i *IotDevice) UpdateIotDevice(tx *sql.Tx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
 	query :=
 		`UPDATE iot_device
-		SET status = ?
-		WHERE id = ?`
+		SET status = $1
+		WHERE serial_key = $2`
 
-	_, err := db.QueryContext(
-		ctx,
-		query,
-		i.Status,
-		i.ID,
-	)
+	var err error
+	if tx != nil {
+		_, err = tx.ExecContext(ctx, query, i.Status, i.SerialKey)
+	} else {
+		_, err = db.ExecContext(ctx, query, i.Status, i.SerialKey)
+	}
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 

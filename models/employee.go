@@ -3,8 +3,6 @@ package models
 import (
 	"context"
 	"database/sql"
-
-	"github.com/migurd/waterwatch_back/helpers"
 )
 
 type Employee struct {
@@ -28,7 +26,7 @@ func scanEmployee(rows *sql.Rows, e *Employee) error {
 	return nil
 }
 
-func (e *Employee) CreateEmployee() (int64, error) {
+func (e *Employee) CreateEmployee(tx *sql.Tx) (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
@@ -38,14 +36,13 @@ func (e *Employee) CreateEmployee() (int64, error) {
 		VALUES ($1, $2, $3, $4)`
 
 	var id int64
-	err := db.QueryRowContext(
-		ctx,
-		query,
-		e.EmployeeTypeID,
-		e.FirstName,
-		e.LastName,
-		e.Curp,
-	).Scan(&id)
+	var err error
+
+	if tx != nil {
+		err = tx.QueryRowContext(ctx, query, e.EmployeeTypeID, e.FirstName, e.LastName, e.Curp).Scan(&id)
+	} else {
+		err = db.QueryRowContext(ctx, query, e.EmployeeTypeID, e.FirstName, e.LastName, e.Curp).Scan(&id)
+	}
 	if err != nil {
 		return 0, err
 	}
@@ -128,13 +125,16 @@ func (e *Employee) GetEmployeeIDByEmail(email string) (int64, error) {
 	return employee.ID, nil
 }
 
-func (e *Employee) GetRandomActiveEmployee() (*Employee, error) {
-	var employees []*Employee
-	employees, err := e.GetAllActiveEmployees()
+func (e *Employee) GetEmployeeDetails() (any, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query := `SELECT full_name, phone_number, email FROM get_employee_details($1)`
+
+	result, err := db.ExecContext(ctx, query, e.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	employee := employees[helpers.RandomNumber(len(employees))]
-	return employee, nil
+	return result, nil
 }

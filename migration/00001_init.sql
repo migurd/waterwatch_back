@@ -42,6 +42,9 @@ CREATE TABLE IF NOT EXISTS public.appointment_type
     CONSTRAINT appointment_type_pkey PRIMARY KEY (id)
 );
 
+COMMENT ON TABLE public.appointment_type
+    IS '1. Installation; 2. Maintenance';
+
 CREATE TABLE IF NOT EXISTS public.client
 (
     id bigserial NOT NULL,
