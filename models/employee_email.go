@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"database/sql"
+	"errors"
 )
 
 type EmployeeEmail struct {
@@ -21,12 +22,12 @@ func (e *EmployeeEmail) CreateEmployeeEmail(tx *sql.Tx) error {
 
 	var err error
 	if tx != nil {
-		_, err = tx.QueryContext(ctx, query, e.EmployeeID, e.Email)
+		_, err = tx.ExecContext(ctx, query, e.EmployeeID, e.Email)
 	} else {
-		_, err = db.QueryContext(ctx, query, e.EmployeeID, e.Email)
+		_, err = db.ExecContext(ctx, query, e.EmployeeID, e.Email)
 	}
 	if err != nil {
-		return err
+		return errors.New("error creating employee email: " + err.Error())
 	}
 
 	return nil

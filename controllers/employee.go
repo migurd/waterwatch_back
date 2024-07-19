@@ -44,7 +44,7 @@ func (c *Controllers) CreateEmployee(w http.ResponseWriter, r *http.Request) err
 	}
 
 	// validation
-	if len(employee.FirstName) == 0 || len(employee.LastName) == 0 ||
+	if len(employee.FirstName) == 0 || len(employee.LastName) == 0 || len(employee.Curp) == 0 ||
 		len(employeeEmail.Email) == 0 || len(employeePhoneNumber.CountryCode) == 0 || len(employeePhoneNumber.PhoneNumber) == 0 {
 		return fmt.Errorf("rellena todos los campos para crear una cuenta, por favor")
 	}
@@ -100,7 +100,7 @@ func (c *Controllers) CreateEmployee(w http.ResponseWriter, r *http.Request) err
 	}
 
 	// Generate JWT after successful transaction commit
-	token, err := services.GenerateJWT(employee.ID, employeeAccount.Username)
+	token, err := services.GenerateJWT(employee.ID, employeeAccount.Username, "employee")
 	if err != nil {
 		return err
 	}

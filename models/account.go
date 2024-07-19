@@ -21,14 +21,14 @@ func (a *Account) CreateAccount(tx *sql.Tx) error {
 
 	query := `
     INSERT INTO account 
-    (client_id, username, password, status)
-    VALUES ($1, $2, $3, $4)`
+    (client_id, username, password)
+    VALUES ($1, $2, $3)`
 
 	var err error
 	if tx != nil {
-		_, err = tx.ExecContext(ctx, query, a.ClientID, a.Username, a.Password, a.Status)
+		_, err = tx.ExecContext(ctx, query, a.ClientID, a.Username, a.Password)
 	} else {
-		_, err = db.ExecContext(ctx, query, a.ClientID, a.Username, a.Password, a.Status)
+		_, err = db.ExecContext(ctx, query, a.ClientID, a.Username, a.Password)
 	}
 
 	if err != nil {
@@ -58,10 +58,10 @@ func (a *Account) Login() (string, error) {
 	}
 
 	// we check if the user exists
-	query = `SELECT username, password FROM account WHERE username = $1`
+	query = `SELECT client_id, username, password FROM account WHERE username = $1`
 	var dbAccount Account
 
-	err = db.QueryRowContext(ctx, query, a.Username).Scan(&dbAccount.Username, &dbAccount.Password)
+	err = db.QueryRowContext(ctx, query, a.Username).Scan(&dbAccount.ClientID, &dbAccount.Username, &dbAccount.Password)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return "", fmt.Errorf("username/email not found")
@@ -100,7 +100,7 @@ func (a *Account) Login() (string, error) {
 	}
 
 	// Generate JWT Token
-	token, err := services.GenerateJWT(a.ClientID, a.Username)
+	token, err := services.GenerateJWT(dbAccount.ClientID, a.Username, "client")
 	if err != nil {
 		return "", err
 	}

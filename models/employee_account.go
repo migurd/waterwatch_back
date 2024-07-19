@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/migurd/waterwatch_back/services"
@@ -20,17 +21,17 @@ func (e *EmployeeAccount) CreateEmployeeAccount(tx *sql.Tx) error {
 
 	query :=
 		`INSERT INTO employee_account(employee_id, username, password)
-		VALUES (?, ?, ?)`
+		VALUES ($1, $2, $3)`
 
 	var err error
 
 	if tx != nil {
-		_, err = tx.QueryContext(ctx, query, e.EmployeeID, e.Username, e.Password)
+		_, err = tx.ExecContext(ctx, query, e.EmployeeID, e.Username, e.Password)
 	} else {
-		_, err = db.QueryContext(ctx, query, e.EmployeeID, e.Username, e.Password)
+		_, err = db.ExecContext(ctx, query, e.EmployeeID, e.Username, e.Password)
 	}
 	if err != nil {
-		return err
+		return errors.New("error creating employee account: " + err.Error())
 	}
 
 	return nil
@@ -57,10 +58,10 @@ func (e *EmployeeAccount) EmployeeLogin() (string, error) {
 	}
 
 	// we check if the user exists
-	query = `SELECT username, password FROM employee_account WHERE username = $1`
+	query = `SELECT employee_id, username, password FROM employee_account WHERE username = $1`
 	var dbAccount EmployeeAccount
 
-	err = db.QueryRowContext(ctx, query, e.Username).Scan(&dbAccount.Username, &dbAccount.Password)
+	err = db.QueryRowContext(ctx, query, e.Username).Scan(&dbAccount.EmployeeID, &dbAccount.Username, &dbAccount.Password)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return "", fmt.Errorf("username/email not found")
@@ -99,7 +100,7 @@ func (e *EmployeeAccount) EmployeeLogin() (string, error) {
 	}
 
 	// Generate JWT Token
-	token, err := services.GenerateJWT(e.EmployeeID, e.Username)
+	token, err := services.GenerateJWT(dbAccount.EmployeeID, e.Username, "employee")
 	if err != nil {
 		return "", err
 	}

@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"database/sql"
+	"errors"
 )
 
 type ClientAddress struct {
@@ -122,14 +123,37 @@ func (c *ClientAddress) UpdateClientAddress() error {
 }
 
 func (c *ClientAddress) DeleteClientAddress() error {
+	amount, err := c.CountClientAddresses()
+	if err != nil {
+		return err
+	}
+	if amount <= 1 {
+		return errors.New("there has to be at least one existing direction. Couldn't delete direction")
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
 	query := `DELETE * FROM client_address WHERE id = $1`
 
-	_, err := db.ExecContext(ctx, query, c.ID)
+	_, err = db.ExecContext(ctx, query, c.ID)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (c *ClientAddress) CountClientAddresses() (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query := `SELECT COUNT(id) FROM client_address WHERE id = $1`
+
+	var amount int64
+	err := db.QueryRowContext(ctx, query, c.ID).Scan(&amount)
+	if err != nil {
+		return 0, err
+	}
+
+	return amount, nil
 }

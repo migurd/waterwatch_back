@@ -126,13 +126,14 @@ CREATE TABLE IF NOT EXISTS public.employee_account
     employee_id bigint NOT NULL,
     username character varying(50) COLLATE pg_catalog."default" NOT NULL,
     password character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT employee_account_pkey PRIMARY KEY (employee_id)
+    CONSTRAINT employee_account_pkey PRIMARY KEY (employee_id),
+    CONSTRAINT employee_account_username_key UNIQUE (username)
 );
 
 CREATE TABLE IF NOT EXISTS public.employee_account_security
 (
     employee_account_employee_id bigint NOT NULL,
-    attemts integer DEFAULT 0,
+    attempts integer DEFAULT 0,
     is_password_encrypted boolean DEFAULT false,
     last_attempt time with time zone,
     last_time_password_changed time with time zone,

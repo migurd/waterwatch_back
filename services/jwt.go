@@ -15,14 +15,16 @@ var jwtKey = []byte(stringKey)
 type Claims struct {
 	ID       int64  `json:"id"`
 	Username string `json:"username"`
+	Role     string `json:"role"`
 	jwt.StandardClaims
 }
 
-func GenerateJWT(id int64, username string) (string, error) {
+func GenerateJWT(id int64, username string, role string) (string, error) {
 	expirationTime := time.Now().Add(24 * time.Hour) // 1 day expiration
 	claims := &Claims{
 		ID:       id,
 		Username: username,
+		Role:     role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 			Id:        strconv.FormatInt(id, 10), // Store ID as a string

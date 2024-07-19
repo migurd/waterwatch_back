@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"database/sql"
+	"errors"
 )
 
 type EmployeePhoneNumber struct {
@@ -23,12 +24,12 @@ func (e *EmployeePhoneNumber) CreateEmployeePhoneNumber(tx *sql.Tx) error {
 	var err error
 
 	if tx != nil {
-		_, err = tx.QueryContext(ctx, query, e.EmployeeID, e.CountryCode, e.PhoneNumber)
+		_, err = tx.ExecContext(ctx, query, e.EmployeeID, e.CountryCode, e.PhoneNumber)
 	} else {
-		_, err = db.QueryContext(ctx, query, e.EmployeeID, e.CountryCode, e.PhoneNumber)
+		_, err = db.ExecContext(ctx, query, e.EmployeeID, e.CountryCode, e.PhoneNumber)
 	}
 	if err != nil {
-		return err
+		return errors.New("error creating employee phone number: " + err.Error())
 	}
 
 	return nil

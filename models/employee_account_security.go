@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 )
 
@@ -21,17 +22,17 @@ func (e *EmployeeAccountSecurity) CreateEmployeeAccountSecurity(tx *sql.Tx) erro
 	query :=
 		`INSERT INTO employee_account_security
 		(employee_account_employee_id)
-		VALUES (?)`
+		VALUES ($1)`
 
 	var err error
 
 	if tx != nil {
-		_, err = tx.QueryContext(ctx, query, e.EmployeeAccountEmployeeID)
+		_, err = tx.ExecContext(ctx, query, e.EmployeeAccountEmployeeID)
 	} else {
-		_, err = db.QueryContext(ctx, query, e.EmployeeAccountEmployeeID)
+		_, err = db.ExecContext(ctx, query, e.EmployeeAccountEmployeeID)
 	}
 	if err != nil {
-		return err
+		return errors.New("error creating employee account security: " + err.Error())
 	}
 
 	return nil

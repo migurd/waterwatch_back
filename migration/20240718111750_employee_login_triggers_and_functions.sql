@@ -2,13 +2,13 @@
 -- +goose StatementBegin
 BEGIN;
 
-CREATE OR REPLACE FUNCTION get_client_user_by_email(email_param VARCHAR)
+CREATE OR REPLACE FUNCTION get_employee_user_by_email(email_param VARCHAR)
 RETURNS TABLE(username VARCHAR) AS $$
 BEGIN
   RETURN QUERY
   SELECT a.username
-  FROM account a
-  LEFT JOIN client_email e ON a.client_id = e.client_id
+  FROM employee_account a
+  LEFT JOIN employee_email e ON a.employee_id = e.employee_id
   WHERE e.email = email_param;
 END;
 $$ LANGUAGE plpgsql;
@@ -114,7 +114,7 @@ COMMIT;
 -- +goose StatementBegin
 BEGIN;
 
-DROP FUNCTION IF EXISTS get_client_user_by_email(VARCHAR);
+DROP FUNCTION IF EXISTS get_employee_user_by_email(VARCHAR);
 DROP FUNCTION IF EXISTS check_password_encryption_employee(VARCHAR);
 DROP PROCEDURE IF EXISTS increase_attempts_employee(VARCHAR);
 DROP PROCEDURE IF EXISTS reset_attempts_employee(VARCHAR);

@@ -33,7 +33,8 @@ func (e *Employee) CreateEmployee(tx *sql.Tx) (int64, error) {
 	query :=
 		`INSERT INTO employee
 		(employee_type_id, first_name, last_name, curp)
-		VALUES ($1, $2, $3, $4)`
+		VALUES ($1, $2, $3, $4)
+		RETURNING id`
 
 	var id int64
 	var err error
