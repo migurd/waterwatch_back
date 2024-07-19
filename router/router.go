@@ -42,8 +42,8 @@ func Routes(controllers *controllers.Controllers) *mux.Router {
 	// == TAKE INTO CONSIDERATION THAT THE TYPE OF APPOINTMENT MUST BE SENT
 	clientRoutes.HandleFunc("/create-installation-appointment", helpers.MakeHTTPHandleFunc(controllers.CreateAppointment(1))).Methods("POST")
 	clientRoutes.HandleFunc("/get-pending-installation-appointment", helpers.MakeHTTPHandleFunc(controllers.GetPendingAppointment(1))).Methods("GET")
-	clientRoutes.HandleFunc("/update-installation-appointment", helpers.MakeHTTPHandleFunc(controllers.UpdateAppointment)).Methods("PATCH")
-	clientRoutes.HandleFunc("/delete-installation-appointment", helpers.MakeHTTPHandleFunc(controllers.DeleteAppointment)).Methods("DELETE")
+	clientRoutes.HandleFunc("/update-installation-appointment", helpers.MakeHTTPHandleFunc(controllers.UpdateAppointment(1))).Methods("PATCH")
+	clientRoutes.HandleFunc("/delete-installation-appointment", helpers.MakeHTTPHandleFunc(controllers.DeleteAppointment(1))).Methods("DELETE")
 
 	// PROTECTED
 	// --> create-client-address
@@ -103,8 +103,8 @@ func Routes(controllers *controllers.Controllers) *mux.Router {
 	// --> delete maintenance appointment
 	employeeRoutes.HandleFunc("/create-installation-appointment", helpers.MakeHTTPHandleFunc(controllers.CreateAppointment(2))).Methods("POST")
 	employeeRoutes.HandleFunc("/get-pending-installation-appointment", helpers.MakeHTTPHandleFunc(controllers.GetPendingAppointment(2))).Methods("GET")
-	employeeRoutes.HandleFunc("/update-installation-appointment", helpers.MakeHTTPHandleFunc(controllers.UpdateAppointment)).Methods("PATCH")
-	employeeRoutes.HandleFunc("/delete-installation-appointment", helpers.MakeHTTPHandleFunc(controllers.DeleteAppointment)).Methods("DELETE")
+	employeeRoutes.HandleFunc("/update-installation-appointment", helpers.MakeHTTPHandleFunc(controllers.UpdateAppointment(2))).Methods("PATCH")
+	employeeRoutes.HandleFunc("/delete-installation-appointment", helpers.MakeHTTPHandleFunc(controllers.DeleteAppointment(2))).Methods("DELETE")
 
 	return router
 }

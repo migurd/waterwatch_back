@@ -32,8 +32,9 @@ func (a *Appointment) CreateAppointment() (int64, error) {
 	defer cancel()
 
 	query := `INSERT INTO appointment
-		(appointment_type_id, address_id, employee_id, details, requested_date, done_date)
-		VALUES($1, $2, $3, $4, $5, $6)`
+		(appointment_type_id, address_id, client_id, details, requested_date)
+		VALUES($1, $2, $3, $4, $5)
+		RETURNING id`
 
 	var id int64
 	err = db.QueryRowContext(
@@ -41,10 +42,9 @@ func (a *Appointment) CreateAppointment() (int64, error) {
 		query,
 		a.AppointmentTypeID,
 		a.AddressID,
-		a.EmployeeID,
+		a.ClientID,
 		a.Details,
 		a.RequestedDate,
-		a.DoneDate,
 	).Scan(&id)
 	if err != nil {
 		return 0, err
@@ -58,12 +58,14 @@ func (a *Appointment) GetPendingAppointment() (Appointment, error) {
 	defer cancel()
 
 	// TODO: instead of returning the id, it should return the data like an address string or the employee details
-	query := `SELECT appointment_type_id, address_id, employee_id, details, requested_date FROM appointment WHERE appointment_type = $1 and done_date IS NULL`
+	query := `SELECT id, appointment_type_id, address_id, client_id, COALESCE(employee_id, 0), details, requested_date FROM appointment WHERE appointment_type_id = $1 AND done_date IS NULL AND client_id = $2`
 
 	var appointment Appointment
-	err := db.QueryRowContext(ctx, query, a.AppointmentTypeID).Scan(
+	err := db.QueryRowContext(ctx, query, a.AppointmentTypeID, a.ClientID).Scan(
+		&appointment.ID,
 		&appointment.AppointmentTypeID,
 		&appointment.AddressID,
+		&appointment.ClientID,
 		&appointment.EmployeeID,
 		&appointment.Details,
 		&appointment.RequestedDate,
@@ -79,12 +81,17 @@ func (a *Appointment) GetPendingAppointment() (Appointment, error) {
 }
 
 func (a *Appointment) UpdateAppointmentByClient() error {
+	currentAppointment, err := a.GetPendingAppointment()
+	if err != nil {
+		return err
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
-	query := `UPDATE appointment SET details = $1 AND requested_date $2 WHERE appointment_type_id = $3`
+	query := `UPDATE appointment SET details = $1, requested_date = $2 WHERE id = $3`
 
-	_, err := db.ExecContext(ctx, query, a.Details, a.RequestedDate, a.AppointmentTypeID)
+	_, err = db.ExecContext(ctx, query, a.Details, a.RequestedDate, currentAppointment.ID)
 	if err != nil {
 		return err
 	}
@@ -93,12 +100,17 @@ func (a *Appointment) UpdateAppointmentByClient() error {
 }
 
 func (a *Appointment) UpdateDoneDateAppoinment() error {
+	currentAppointment, err := a.GetPendingAppointment()
+	if err != nil {
+		return err
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
-	query := `UPDATE appointment SET done_date = $1 WHERE appointment_type_id = $2`
+	query := `UPDATE appointment SET done_date = $1 WHERE id = $2`
 
-	_, err := db.ExecContext(ctx, query, a.DoneDate, a.AppointmentTypeID)
+	_, err = db.ExecContext(ctx, query, a.DoneDate, currentAppointment.ID)
 	if err != nil {
 		return err
 	}
@@ -107,12 +119,17 @@ func (a *Appointment) UpdateDoneDateAppoinment() error {
 }
 
 func (a *Appointment) CancelAppointmentClient() error {
+	currentAppointment, err := a.GetPendingAppointment()
+	if err != nil {
+		return err
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
-	query := `DELETE appointment WHERE id = $1`
+	query := `DELETE from appointment WHERE id = $1`
 
-	_, err := db.ExecContext(ctx, query, a.ID)
+	_, err = db.ExecContext(ctx, query, currentAppointment.ID)
 	if err != nil {
 		return err
 	}
@@ -243,10 +260,10 @@ func (a *Appointment) IsAppointment() (bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
-	query := `SELECT id FROM appointment WHERE appointment_type = $1 and done_date IS NULL`
+	query := `SELECT id FROM appointment WHERE appointment_type_id = $1 AND done_date IS NULL AND client_id = $2`
 
 	var id int64
-	err := db.QueryRowContext(ctx, query, a.AppointmentTypeID).Scan(&id)
+	err := db.QueryRowContext(ctx, query, a.AppointmentTypeID, a.ClientID).Scan(&id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return false, nil

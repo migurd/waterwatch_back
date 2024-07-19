@@ -43,24 +43,14 @@ func (c *Controllers) CreateAppointment(appointmentType int64) helpers.ApiFunc {
 
 func (c *Controllers) GetPendingAppointment(appointmentType int64) helpers.ApiFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		var clientEmail models.ClientEmail
 		var appoinment models.Appointment
 
-		body, err := io.ReadAll(r.Body)
+		claims, err := GetClaims(r)
 		if err != nil {
 			return err
 		}
 
-		err = json.Unmarshal(body, &clientEmail)
-		if err != nil {
-			return err
-		}
-
-		client_id, err := clientEmail.GetClientIDByEmail()
-		if err != nil {
-			return err
-		}
-		appoinment.ClientID = client_id                // current user
+		appoinment.ClientID = claims.ID                // current user
 		appoinment.AppointmentTypeID = appointmentType // installation
 
 		var pendingAppointment models.Appointment
@@ -74,41 +64,61 @@ func (c *Controllers) GetPendingAppointment(appointmentType int64) helpers.ApiFu
 	}
 }
 
-func (c *Controllers) UpdateAppointment(w http.ResponseWriter, r *http.Request) error {
-	var appointment models.Appointment
+func (c *Controllers) UpdateAppointment(appointmentType int64) helpers.ApiFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		var appointment models.Appointment
 
-	// should be able to edit request date and details, not other fields
-	// ASSUMES data was totally filled
-	err := json.NewDecoder(r.Body).Decode(&appointment)
-	if err != nil {
-		return err
+		// should be able to edit request date and details, not other fields
+		// ASSUMES data was totally filled
+		err := json.NewDecoder(r.Body).Decode(&appointment)
+		if err != nil {
+			return err
+		}
+
+		claims, err := GetClaims(r)
+		if err != nil {
+			return err
+		}
+
+		appointment.ClientID = claims.ID // current user
+		appointment.AppointmentTypeID = appointmentType
+
+		err = appointment.UpdateAppointmentByClient()
+		if err != nil {
+			return err
+		}
+
+		helpers.WriteJSON(w, http.StatusOK, helpers.Response{Message: "Updated appointment successfully!"})
+		return nil
 	}
-
-	err = appointment.UpdateAppointmentByClient()
-	if err != nil {
-		return err
-	}
-
-	helpers.WriteJSON(w, http.StatusOK, helpers.Response{Message: "Updated appointment successfully!"})
-	return nil
 }
 
-func (c *Controllers) DeleteAppointment(w http.ResponseWriter, r *http.Request) error {
-	var appointment models.Appointment
+func (c *Controllers) DeleteAppointment(appointmentType int64) helpers.ApiFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		var appointment models.Appointment
 
-	// ASSUMES ID and appointment_type_id were filled
-	err := json.NewDecoder(r.Body).Decode(&appointment)
-	if err != nil {
-		return err
+		// ASSUMES ID and appointment_type_id were filled
+		err := json.NewDecoder(r.Body).Decode(&appointment)
+		if err != nil {
+			return err
+		}
+
+		claims, err := GetClaims(r)
+		if err != nil {
+			return err
+		}
+
+		appointment.ClientID = claims.ID // current user
+		appointment.AppointmentTypeID = appointmentType
+
+		err = appointment.CancelAppointmentClient()
+		if err != nil {
+			return err
+		}
+
+		helpers.WriteJSON(w, http.StatusOK, helpers.Response{Message: "Deleted appointment successfully!"})
+		return nil
 	}
-
-	err = appointment.CancelAppointmentClient()
-	if err != nil {
-		return err
-	}
-
-	helpers.WriteJSON(w, http.StatusOK, helpers.Response{Message: "Deleted appointment successfully!"})
-	return nil
 }
 
 func (c *Controllers) GetAllUnassignedAppointments(w http.ResponseWriter, r *http.Request) error {

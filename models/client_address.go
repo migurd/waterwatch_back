@@ -134,7 +134,7 @@ func (c *ClientAddress) DeleteClientAddress() error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
-	query := `DELETE * FROM client_address WHERE id = $1`
+	query := `DELETE FROM client_address WHERE id = $1`
 
 	_, err = db.ExecContext(ctx, query, c.ID)
 	if err != nil {
@@ -147,10 +147,10 @@ func (c *ClientAddress) CountClientAddresses() (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
-	query := `SELECT COUNT(id) FROM client_address WHERE id = $1`
+	query := `SELECT COUNT(id) FROM client_address WHERE client_id = $1`
 
 	var amount int64
-	err := db.QueryRowContext(ctx, query, c.ID).Scan(&amount)
+	err := db.QueryRowContext(ctx, query, c.ClientID).Scan(&amount)
 	if err != nil {
 		return 0, err
 	}

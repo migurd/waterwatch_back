@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS public.appointment
     id bigserial NOT NULL,
     appointment_type_id bigint NOT NULL,
     address_id bigint NOT NULL,
+    client_id bigint NOT NULL,
     employee_id bigint,
     details character varying(255) COLLATE pg_catalog."default",
     requested_date timestamp with time zone NOT NULL,
@@ -135,8 +136,8 @@ CREATE TABLE IF NOT EXISTS public.employee_account_security
     employee_account_employee_id bigint NOT NULL,
     attempts integer DEFAULT 0,
     is_password_encrypted boolean DEFAULT false,
-    last_attempt time with time zone,
-    last_time_password_changed time with time zone,
+    last_attempt timestamp with time zone,
+    last_time_password_changed timestamp with time zone,
     CONSTRAINT employee_account_security_pkey PRIMARY KEY (employee_account_employee_id)
 );
 
@@ -271,6 +272,12 @@ ALTER TABLE IF EXISTS public.appointment
     ON DELETE NO ACTION
     NOT VALID;
 
+ALTER TABLE IF EXISTS public.appointment
+    ADD CONSTRAINT appointment_client_id_fkey FOREIGN KEY (client_id)
+    REFERENCES public.client (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
 ALTER TABLE IF EXISTS public.appointment
     ADD CONSTRAINT appointment_employee_id_fkey FOREIGN KEY (employee_id)
