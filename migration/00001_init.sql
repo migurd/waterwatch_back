@@ -92,15 +92,11 @@ CREATE TABLE IF NOT EXISTS public.contact
     CONSTRAINT contact_pkey PRIMARY KEY (id)
 );
 
-COMMENT ON TABLE public.contact
-    IS 'There are two types of contacts:
-1. Celular
-2. Correo';
-
 CREATE TABLE IF NOT EXISTS public.contact_email
 (
     contact_id bigint NOT NULL,
-    contact_email character varying(50) COLLATE pg_catalog."default" NOT NULL
+    email character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT contact_email_email_key UNIQUE (email)
 );
 
 CREATE TABLE IF NOT EXISTS public.contact_phone_number
@@ -187,7 +183,7 @@ CREATE TABLE IF NOT EXISTS public.iot_device
 CREATE TABLE IF NOT EXISTS public.saa
 (
     id bigserial NOT NULL,
-    address_id bigint NOT NULL,
+    appointment_id bigint NOT NULL,
     saa_type_id bigint NOT NULL,
     iot_device_id bigint NOT NULL,
     CONSTRAINT saa_pkey PRIMARY KEY (id)
@@ -226,8 +222,8 @@ COMMENT ON TABLE public.saa_record
 CREATE TABLE IF NOT EXISTS public.saa_type
 (
     id bigserial NOT NULL,
-    name character varying COLLATE pg_catalog."default" NOT NULL,
-    description character varying COLLATE pg_catalog."default" NOT NULL,
+    name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    description character varying(1024) COLLATE pg_catalog."default" NOT NULL,
     capacity integer NOT NULL,
     diameter double precision NOT NULL,
     height double precision NOT NULL,
@@ -380,8 +376,8 @@ CREATE INDEX IF NOT EXISTS employee_phone_number_pkey
 
 
 ALTER TABLE IF EXISTS public.saa
-    ADD CONSTRAINT saa_address_id_fkey FOREIGN KEY (address_id)
-    REFERENCES public.client_address (id) MATCH SIMPLE
+    ADD CONSTRAINT appointment_id_fkey FOREIGN KEY (appointment_id)
+    REFERENCES public.appointment (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;

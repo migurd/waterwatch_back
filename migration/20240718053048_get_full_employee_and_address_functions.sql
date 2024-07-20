@@ -30,19 +30,6 @@ END;
 $$ LANGUAGE plpgsql;
 -- +goose StatementEnd
 
--- +goose StatementBegin
-CREATE OR REPLACE FUNCTION get_full_address(address_id bigint)
-RETURNS text AS $$
-BEGIN
-  RETURN (
-    SELECT street || ' ' || house_number || ', ' || neighborhood || ', ' || postal_code
-    FROM public.client_address
-    WHERE id = address_id
-  );
-END;
-$$ LANGUAGE plpgsql;
--- +goose StatementEnd
-
 -- +goose Down
 -- +goose StatementBegin
 DROP FUNCTION IF EXISTS get_employee_details(bigint);
@@ -50,8 +37,4 @@ DROP FUNCTION IF EXISTS get_employee_details(bigint);
 
 -- +goose StatementBegin
 DROP FUNCTION IF EXISTS get_address_state_city(bigint);
--- +goose StatementEnd
-
--- +goose StatementBegin
-DROP FUNCTION IF EXISTS get_full_address(bigint);
 -- +goose StatementEnd

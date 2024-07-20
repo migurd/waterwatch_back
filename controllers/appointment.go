@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -97,12 +98,6 @@ func (c *Controllers) DeleteAppointment(appointmentType int64) helpers.ApiFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		var appointment models.Appointment
 
-		// ASSUMES ID and appointment_type_id were filled
-		err := json.NewDecoder(r.Body).Decode(&appointment)
-		if err != nil {
-			return err
-		}
-
 		claims, err := GetClaims(r)
 		if err != nil {
 			return err
@@ -165,7 +160,7 @@ func (c *Controllers) AcceptAppointment(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		return err
 	}
-	appointment.ClientID = claims.ID
+	appointment.EmployeeID = claims.ID
 
 	err = appointment.AcceptAppointment()
 	if err != nil {
@@ -201,6 +196,9 @@ func (c *Controllers) CompleteAppointment(appointmentType int64) helpers.ApiFunc
 	return func(w http.ResponseWriter, r *http.Request) error {
 		var appoinment models.Appointment
 		var iotDevice models.IotDevice
+		var saaType models.SaaType
+		var saa models.Saa
+		var saaDescription models.SaaDescription
 
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -212,6 +210,10 @@ func (c *Controllers) CompleteAppointment(appointmentType int64) helpers.ApiFunc
 			return err
 		}
 		err = json.Unmarshal(body, &iotDevice)
+		if err != nil {
+			return err
+		}
+		err = json.Unmarshal(body, &saaType)
 		if err != nil {
 			return err
 		}
@@ -234,16 +236,73 @@ func (c *Controllers) CompleteAppointment(appointmentType int64) helpers.ApiFunc
 			}
 		}()
 
-		iotDevice.Status = true
-		if err = iotDevice.UpdateIotDevice(tx); err != nil {
-			return err
-		}
+		// installation process
+		if appointmentType == 1 {
+			saaTypeID, err := saaType.CreateSaaType(tx)
+			if err != nil {
+				return err
+			}
 
+			saa.SaaTypeID = saaTypeID
+			saa.AppointmentID = appoinment.ID
+			saa.IotDeviceID, err = iotDevice.GetIotDeviceIDBySerialKey()
+			if err != nil {
+				return err
+			}
+
+			saaID, err := saa.CreateSaa(tx)
+			if err != nil {
+				return err
+			}
+
+			saaDescription.SaaID = saaID
+			strNumber := fmt.Sprintf("%d", saaID)
+			if err != nil {
+				return err
+			}
+			saaDescription.Name = "Nombre " + strNumber
+			saaDescription.Name = "Descripción " + strNumber
+
+			err = saaDescription.CreateSaaDescription(tx)
+			if err != nil {
+				return err
+			}
+
+			iotDevice.Status = true
+			if err = iotDevice.UpdateIotDevice(tx); err != nil {
+				return err
+			}
+		} // END IF BLOCK
+
+		// installation and maintenance process
 		appoinment.AppointmentTypeID = appointmentType
 		if err = appoinment.CompleteAppointment(tx); err != nil {
 			return err
 		}
 
+		return nil
+	}
+}
+
+func (c *Controllers) GetAllDoneAppointments(appointmentType int64) helpers.ApiFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		var appointment models.Appointment
+
+		claims, err := GetClaims(r)
+		if err != nil {
+			return err
+		}
+
+		appointment.ClientID = claims.ID
+		appointment.AppointmentTypeID = appointmentType
+
+		var appointments []*models.Appointment
+		appointments, err = appointment.GetAllDoneAppointments()
+		if err != nil {
+			return err
+		}
+
+		helpers.WriteJSON(w, http.StatusOK, appointments)
 		return nil
 	}
 }

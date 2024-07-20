@@ -58,7 +58,7 @@ func (a *Appointment) GetPendingAppointment() (Appointment, error) {
 	defer cancel()
 
 	// TODO: instead of returning the id, it should return the data like an address string or the employee details
-	query := `SELECT id, appointment_type_id, address_id, client_id, COALESCE(employee_id, 0), details, requested_date FROM appointment WHERE appointment_type_id = $1 AND done_date IS NULL AND client_id = $2`
+	query := `SELECT id, appointment_type_id, address_id, client_id, details, requested_date FROM appointment WHERE appointment_type_id = $1 AND done_date IS NULL AND client_id = $2`
 
 	var appointment Appointment
 	err := db.QueryRowContext(ctx, query, a.AppointmentTypeID, a.ClientID).Scan(
@@ -66,7 +66,6 @@ func (a *Appointment) GetPendingAppointment() (Appointment, error) {
 		&appointment.AppointmentTypeID,
 		&appointment.AddressID,
 		&appointment.ClientID,
-		&appointment.EmployeeID,
 		&appointment.Details,
 		&appointment.RequestedDate,
 	)
@@ -142,7 +141,7 @@ func (a *Appointment) GetAllUnassignedAppointments() ([]*Appointment, error) {
 	defer cancel()
 
 	query :=
-		`SELECT id, address_id, appointment_type_id, client_id, employee_id, details, requested_date, done_date
+		`SELECT id, address_id, appointment_type_id, client_id, details, requested_date
 		FROM appointment
 		WHERE employee_id IS NULL AND done_date IS NULL`
 
@@ -159,10 +158,8 @@ func (a *Appointment) GetAllUnassignedAppointments() ([]*Appointment, error) {
 			&appoinment.AddressID,
 			&appoinment.AppointmentTypeID,
 			&appoinment.ClientID,
-			&appoinment.EmployeeID,
 			&appoinment.Details,
 			&appoinment.RequestedDate,
-			&appoinment.DoneDate,
 		)
 		if err != nil {
 			return nil, err
@@ -178,7 +175,7 @@ func (a *Appointment) GetAllAppoinmentsAssigned() ([]*Appointment, error) {
 	defer cancel()
 
 	query :=
-		`SELECT id, address_id, appointment_type_id, client_id, employee_id, details, requested_date, done_date
+		`SELECT id, address_id, appointment_type_id, client_id, employee_id, details, requested_date
 		FROM appointment
 		WHERE employee_id = $1 AND done_date IS NULL`
 
@@ -198,7 +195,6 @@ func (a *Appointment) GetAllAppoinmentsAssigned() ([]*Appointment, error) {
 			&appoinment.EmployeeID,
 			&appoinment.Details,
 			&appoinment.RequestedDate,
-			&appoinment.DoneDate,
 		)
 		if err != nil {
 			return nil, err
@@ -272,4 +268,38 @@ func (a *Appointment) IsAppointment() (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (a *Appointment) GetAllDoneAppointments() ([]*Appointment, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query :=
+		`SELECT id, appointment_type_id, address_id, client_id, employee_id, details, requested_date, done_date
+		FROM appointment WHERE appointment_type_id = $1 AND client_id = $2 AND done_date IS NOT NULL`
+
+	rows, err := db.QueryContext(ctx, query, a.AppointmentTypeID, a.ClientID)
+	if err != nil {
+		return nil, nil
+	}
+
+	var appointments []*Appointment
+	for rows.Next() {
+		var appointment Appointment
+		err = rows.Scan(
+			&appointment.ID,
+			&appointment.AppointmentTypeID,
+			&appointment.AddressID,
+			&appointment.ClientID,
+			&appointment.EmployeeID,
+			&appointment.Details,
+			&appointment.RequestedDate,
+			&appointment.DoneDate,
+		)
+		if err != nil {
+			return nil, err
+		}
+		appointments = append(appointments, &appointment)
+	}
+	return appointments, nil
 }

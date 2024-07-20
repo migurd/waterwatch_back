@@ -3,7 +3,7 @@
 
 -- Appointment Type
 INSERT INTO appointment_type(name)
-VALUES('CLIENTE');
+VALUES('INSTALACIÓN');
 INSERT INTO appointment_type(name)
 VALUES('MANTENIMIENTO');
 
@@ -96,16 +96,53 @@ INSERT INTO account_security(account_client_id, is_password_encrypted)
 VALUES(1, FALSE);
 
 -- enable first SAA for testing
+INSERT INTO appointment(appointment_type_id, address_id, client_id, employee_id, details, requested_date)
+VALUES((SELECT id FROM appointment_type WHERE "name" = 'INSTALACIÓN'), 1, 1, 1, 'huwwwyyyy up! my tinaco is all caca', '2024-10-10');
+
 INSERT INTO saa_type("name", "description", capacity, diameter, height)
 VALUES('TINACO TRICAPA 1100 L EQUIPADO', 'Tinaco Sistema Mejor Agua (SMA) 1100 L Equipado Rotoplas fabricado con polietileno lineal de baja densidad, color beige por fuera y blanco por dentro.', 1100, 110, 137);
 
-UPDATE iot_device SET "status" = TRUE WHERE serial_key = 'AAAAA-AAAAA-AAAAA';
-
-INSERT INTO saa(address_id, saa_type_id, iot_device_id)
-VALUES(1, 1, 1);
+INSERT INTO saa(appointment_id, saa_type_id, iot_device_id)
+VALUES(1, 1, (SELECT id FROM iot_device WHERE serial_key = 'AAAAA-AAAAA-AAAAA'));
 
 INSERT INTO saa_description(saa_id, "name", "description")
 VALUES(1, 'Tinaco 1', 'Tinaco que está en el techo de mi abuelita Pancha');
+
+UPDATE appointment SET done_date = '2024-10-10';
+
+UPDATE iot_device SET "status" = TRUE WHERE serial_key = 'AAAAA-AAAAA-AAAAA';
+
+-- create contacts
+INSERT INTO contact("name", photo_url)
+VALUES('WaterWatch', 'https://pbs.twimg.com/media/Fkhdzf9VQAE4fbn.jpg');
+INSERT INTO contact("name", photo_url)
+VALUES('SHITSU', 'https://wallpapercave.com/wp/wp8856774.jpg');
+INSERT INTO contact("name", photo_url)
+VALUES('Ayuda', 'https://static.zerochan.net/Rudeus.Greyrat.full.4003848.jpg');
+
+INSERT INTO contact_email(contact_id, email)
+VALUES(1, 'ayuda1@waterwatch.com');
+INSERT INTO contact_email(contact_id, email)
+VALUES(1, 'ayuda2@waterwatch.com');
+
+INSERT INTO contact_email(contact_id, email)
+VALUES(2, 'ayuda1@shitsu.com');
+INSERT INTO contact_email(contact_id, email)
+VALUES(2, 'ayuda2@shitsu.com');
+
+INSERT INTO contact_email(contact_id, email)
+VALUES(3, 'superayuda1@waterwatch.com');
+INSERT INTO contact_email(contact_id, email)
+VALUES(3, 'superayuda2@waterwatch.com');
+INSERT INTO contact_email(contact_id, email)
+VALUES(3, 'superayuda3@waterwatch.com');
+
+INSERT INTO contact_phone_number(contact_id, country_code, phone_number)
+VALUES(1, '52', '1111111111');
+INSERT INTO contact_phone_number(contact_id, country_code, phone_number)
+VALUES(2, '52', '2222222222');
+INSERT INTO contact_phone_number(contact_id, country_code, phone_number)
+VALUES(3, '52', '3333333333');
 
 -- +goose StatementEnd
 

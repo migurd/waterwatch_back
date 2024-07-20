@@ -123,6 +123,19 @@ func (c *ClientAddress) UpdateClientAddress() error {
 }
 
 func (c *ClientAddress) DeleteClientAddress() error {
+	clientAddress, err := c.GetClientAddress()
+	if err != nil {
+		return err
+	}
+
+	isAddressExist, err := clientAddress.IsAddressExist()
+	if err != nil {
+		return err
+	}
+	if isAddressExist {
+		return errors.New("Address couldn't be deleted. there are appointments that use this address.")
+	}
+
 	amount, err := c.CountClientAddresses()
 	if err != nil {
 		return err
@@ -156,4 +169,20 @@ func (c *ClientAddress) CountClientAddresses() (int64, error) {
 	}
 
 	return amount, nil
+}
+
+func (c *ClientAddress) IsAddressExist() (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query := `SELECT * FROM appointment WHERE id = $1`
+
+	_, err := db.ExecContext(ctx, query, c.ID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
 }
