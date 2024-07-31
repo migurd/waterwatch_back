@@ -138,7 +138,7 @@ func (c *Controllers) ClientLogin(w http.ResponseWriter, r *http.Request) error 
 	http.SetCookie(w, &http.Cookie{
 		Name:     "token",
 		Value:    token,
-		Expires:  time.Now().Add(24 * time.Hour),
+		Expires:  time.Now().Add(30 * 24 * time.Hour),
 		HttpOnly: true,
 	})
 
