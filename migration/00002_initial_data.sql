@@ -114,11 +114,11 @@ UPDATE iot_device SET "status" = TRUE WHERE serial_key = 'AAAAA-AAAAA-AAAAA';
 
 -- create contacts
 INSERT INTO contact("name", photo_url)
-VALUES('WaterWatch', 'https://pbs.twimg.com/media/Fkhdzf9VQAE4fbn.jpg');
+VALUES('WaterWatch', 'https://imgur.com/O4E6tzn.jpg');
 INSERT INTO contact("name", photo_url)
-VALUES('SHITSU', 'https://wallpapercave.com/wp/wp8856774.jpg');
+VALUES('SHITSU', 'https://imgur.com/VtUbcF4.jpg');
 INSERT INTO contact("name", photo_url)
-VALUES('Ayuda', 'https://static.zerochan.net/Rudeus.Greyrat.full.4003848.jpg');
+VALUES('Ayuda', 'https://imgur.com/MStkdn2.jpg');
 
 INSERT INTO contact_email(contact_id, email)
 VALUES(1, 'ayuda1@waterwatch.com');

@@ -87,6 +87,7 @@ func Routes(controllers *controllers.Controllers) *mux.Router {
 	// --> post saa_record using serial_key
 	// --> gett all saa_record using serial_key
 	router.HandleFunc("/create-saa-record", helpers.MakeHTTPHandleFunc(controllers.CreateSaaRecord)).Methods("POST")
+	router.Handle("/get-saa-height", helpers.MakeHTTPHandleFunc(controllers.GetSaaHeight)).Methods("GET")
 	clientRoutes.HandleFunc("/get-all-saa-records", helpers.MakeHTTPHandleFunc(controllers.GetSaaRecords)).Methods("GET")
 
 	// =======================================================================
@@ -98,7 +99,7 @@ func Routes(controllers *controllers.Controllers) *mux.Router {
 	// --> patch saa specific name and description
 	// --> get view contact
 	// --> get view saa_maintenance all
-	clientRoutes.HandleFunc("/get-home", helpers.MakeHTTPHandleFunc(controllers.GetHome)).Methods("GET")
+	clientRoutes.HandleFunc("/get-profile", helpers.MakeHTTPHandleFunc(controllers.GetHome)).Methods("GET")
 	clientRoutes.HandleFunc("/get-all-active-saa", helpers.MakeHTTPHandleFunc(controllers.GetAllActiveSaaForClient)).Methods("GET")
 	// clientRoutes.HandleFunc("/get-active-saa", helpers.MakeHTTPHandleFunc(controllers.GetActiveSaa)).Methods("GET")
 	// -->	going to implement later. needs to return smth related to how it good is the water.

@@ -33,7 +33,7 @@ func (c *ContactInfo) GetAllContactInfo() ([]*ContactInfo, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
-	query := `SELECT * FROM get_all_contacts()`
+	query := `SELECT id, name, photo_url, emails, phone_numbers FROM get_all_contacts()`
 
 	rows, err := db.QueryContext(ctx, query)
 	if err != nil {

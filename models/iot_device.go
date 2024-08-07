@@ -113,3 +113,27 @@ func (i *IotDevice) IsBusy() (bool, error) {
 	}
 	return true, nil // row found
 }
+
+func (i *IotDevice) GetHeight() (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query := `
+	SELECT height
+	FROM iot_device i
+	LEFT JOIN saa sa
+		ON i.id = sa.iot_device_id
+	LEFT JOIN saa_type st
+		ON sa.saa_type_id = st.id
+	WHERE
+		i.serial_key = $1
+	`
+
+	var height int64
+	row := db.QueryRowContext(ctx, query, i.SerialKey)
+	err := row.Scan(&height)
+	if err != nil {
+		return 0, err
+	}
+	return height, nil
+}

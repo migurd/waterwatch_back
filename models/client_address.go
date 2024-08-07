@@ -133,7 +133,7 @@ func (c *ClientAddress) DeleteClientAddress() error {
 		return err
 	}
 	if isAddressExist {
-		return errors.New("Address couldn't be deleted. there are appointments that use this address.")
+		return errors.New("address couldn't be deleted. there are appointments that use this address")
 	}
 
 	amount, err := c.CountClientAddresses()
