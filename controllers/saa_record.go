@@ -69,3 +69,23 @@ func (c *Controllers) GetSaaRecords(w http.ResponseWriter, r *http.Request) erro
 	helpers.WriteJSON(w, http.StatusOK, saaRecords)
 	return nil
 }
+
+func (c *Controllers) GetLastSaaRecord(w http.ResponseWriter, r *http.Request) error {
+	var saa models.Saa
+	var saaRecord models.SaaRecord // used to extract all records
+
+	err := json.NewDecoder(r.Body).Decode(&saa) // gets id
+	if err != nil {
+		return err
+	}
+	saaRecord.SaaID = saa.ID
+
+	saaRecord, err = saaRecord.GetLastSaaRecord()
+	if err != nil {
+		return err
+	}
+
+	helpers.WriteJSON(w, http.StatusOK, saaRecord)
+	return nil
+
+}

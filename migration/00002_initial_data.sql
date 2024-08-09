@@ -108,6 +108,9 @@ VALUES(1, 1, (SELECT id FROM iot_device WHERE serial_key = 'AAAAA-AAAAA-AAAAA'))
 INSERT INTO saa_description(saa_id, "name", "description")
 VALUES(1, 'Tinaco 1', 'Tinaco que está en el techo de mi abuelita Pancha');
 
+INSERT INTO saa_record(saa_id, water_level, ph_level, is_contaminated, date)
+VALUES(1, 100, 7, false, NOW());
+
 UPDATE appointment SET done_date = '2024-10-10';
 
 UPDATE iot_device SET "status" = TRUE WHERE serial_key = 'AAAAA-AAAAA-AAAAA';

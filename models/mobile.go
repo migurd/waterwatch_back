@@ -6,25 +6,30 @@ import (
 
 type HomeDetails struct {
 	Username        string `json:"username"`
+	FullName        string `json:"full_name"`
 	Email           string `json:"email"`
 	FullPhoneNumber string `json:"full_phone_number"`
 }
 type SaaDetails struct {
-	SaaID       int64  `json:"saa_id"`
-	SerialKey   string `json:"serial_key"`
-	FullAddress string `json:"full_address"`
-	IsGood      string `json:"is_good"`
+	SaaID             int64  `json:"saa_id"`
+	SerialKey         string `json:"serial_key"`
+	FullAddress       string `json:"full_address"`
+	SaaName           string `json:"saa_name"`
+	SaaDescription    string `json:"saa_description"`
+	IsGood            string `json:"is_good"`
+	IsGoodDescription string `json:"is_good_description"`
 }
 
 func (a *Account) GetHomeDetails() (HomeDetails, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
-	query := `SELECT username, email, phone_number FROM get_account_details($1)`
+	query := `SELECT username, full_name, email, phone_number FROM get_account_details($1)`
 
 	var homeDetails HomeDetails
 	err := db.QueryRowContext(ctx, query, a.ClientID).Scan(
 		&homeDetails.Username,
+		&homeDetails.FullName,
 		&homeDetails.Email,
 		&homeDetails.FullPhoneNumber,
 	)
@@ -52,7 +57,10 @@ func (sd *SaaDetails) GetAllActiveSaaForClient(client_id int64) ([]*SaaDetails, 
 			&saaDetails.SaaID,
 			&saaDetails.SerialKey,
 			&saaDetails.FullAddress,
+			&saaDetails.SaaName,
+			&saaDetails.SaaDescription,
 			&saaDetails.IsGood,
+			&saaDetails.IsGoodDescription,
 		)
 		if err != nil {
 			return nil, err

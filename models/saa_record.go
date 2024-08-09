@@ -68,3 +68,25 @@ func (s *SaaRecord) GetAllSaaRecordsBySaaID() ([]*SaaRecord, error) {
 
 	return saaRecords, nil
 }
+
+func (s *SaaRecord) GetLastSaaRecord() (SaaRecord, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
+	defer cancel()
+
+	query := `SELECT * FROM saa_record WHERE saa_id = $1 ORDER BY date DESC LIMIT 1`
+
+	var saaRecord SaaRecord
+	err := db.QueryRowContext(ctx, query, s.SaaID).Scan(
+		&saaRecord.ID,
+		&saaRecord.SaaID,
+		&saaRecord.WaterLevel,
+		&saaRecord.PhLevel,
+		&saaRecord.IsContaminated,
+		&saaRecord.Date,
+	)
+	if err != nil {
+		return SaaRecord{}, err
+	}
+
+	return saaRecord, nil
+}

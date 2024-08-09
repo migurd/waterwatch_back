@@ -89,6 +89,7 @@ func Routes(controllers *controllers.Controllers) *mux.Router {
 	router.HandleFunc("/create-saa-record", helpers.MakeHTTPHandleFunc(controllers.CreateSaaRecord)).Methods("POST")
 	router.Handle("/get-saa-height", helpers.MakeHTTPHandleFunc(controllers.GetSaaHeight)).Methods("GET")
 	clientRoutes.HandleFunc("/get-all-saa-records", helpers.MakeHTTPHandleFunc(controllers.GetSaaRecords)).Methods("GET")
+	clientRoutes.HandleFunc("/get-last-saa-record", helpers.MakeHTTPHandleFunc(controllers.GetLastSaaRecord)).Methods("GET")
 
 	// =======================================================================
 	// PROTECTED
