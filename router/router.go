@@ -8,6 +8,7 @@ import (
 	"github.com/migurd/waterwatch_back/controllers"
 	"github.com/migurd/waterwatch_back/helpers"
 	"github.com/migurd/waterwatch_back/middleware"
+	"github.com/migurd/waterwatch_back/services"
 )
 
 func Routes(controllers *controllers.Controllers) *mux.Router {
@@ -120,6 +121,9 @@ func Routes(controllers *controllers.Controllers) *mux.Router {
 	clientRoutes.HandleFunc("/get-pending-maintenance-appointment", helpers.MakeHTTPHandleFunc(controllers.GetPendingAppointment(2))).Methods("GET")
 	clientRoutes.HandleFunc("/update-maintenance-appointment", helpers.MakeHTTPHandleFunc(controllers.UpdateAppointment(2))).Methods("PATCH")
 	clientRoutes.HandleFunc("/delete-maintenance-appointment", helpers.MakeHTTPHandleFunc(controllers.DeleteAppointment(2))).Methods("DELETE")
+
+	// OTHER
+	router.HandleFunc("/validate-token", services.GetTokenInfo).Methods("GET")
 
 	return router
 }
