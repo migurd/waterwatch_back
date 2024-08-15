@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/migurd/waterwatch_back/helpers"
@@ -28,18 +28,29 @@ func (c *Controllers) GetAllActiveSaaForClient(w http.ResponseWriter, r *http.Re
 }
 
 func (*Controllers) GetSaaHeight(w http.ResponseWriter, r *http.Request) error {
-	var iot_device models.IotDevice
+	// Extract the 'serial_key' from the query parameters
+	serialKey := r.URL.Query().Get("serial_key")
 
-	err := json.NewDecoder(r.Body).Decode(&iot_device)
-	if err != nil {
-		return err
+	if serialKey == "" {
+		return errors.New("serial_key is required")
 	}
 
+	// Find the IoT device based on the serial_key
+	var iot_device models.IotDevice
+	iot_device.SerialKey = serialKey
+
+	// Calculate the height using the IoT device's method
 	height, err := iot_device.GetHeight()
 	if err != nil {
 		return err
 	}
 
-	helpers.WriteJSON(w, http.StatusOK, height)
+	// Prepare the response
+	response := map[string]interface{}{
+		"height": height,
+	}
+
+	// Send the response as JSON
+	helpers.WriteJSON(w, http.StatusOK, response)
 	return nil
 }
