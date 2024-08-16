@@ -6,8 +6,8 @@ BEGIN
   RETURN QUERY (
     SELECT 
       e.first_name || ' ' || e.last_name AS full_name, 
-      ep.phone_number, 
-      ee.email
+      '+' || ep.country_code || ' ' || ep.phone_number AS phone_number,
+      ee.email::text  -- Cast email to text
     FROM public.employee e
     LEFT JOIN public.employee_phone_number ep ON e.id = ep.employee_id
     LEFT JOIN public.employee_email ee ON e.id = ee.employee_id

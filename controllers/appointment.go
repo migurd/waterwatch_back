@@ -296,8 +296,7 @@ func (c *Controllers) GetAllDoneAppointments(appointmentType int64) helpers.ApiF
 		appointment.ClientID = claims.ID
 		appointment.AppointmentTypeID = appointmentType
 
-		var appointments []*models.Appointment
-		appointments, err = appointment.GetAllDoneAppointments()
+		appointments, err := appointment.GetAllDoneAppointments()
 		if err != nil {
 			return err
 		}

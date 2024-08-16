@@ -22,31 +22,31 @@ INSERT INTO employee_type(name) VALUES('INSTALADOR Y MANTENEDOR');
 
 -- Employee
 INSERT INTO employee(employee_type_id, first_name, last_name, curp, status)
-VALUES((SELECT id FROM employee_type WHERE name = 'INSTALADOR'), 'Instalador', 'Num 1', 'AAAAAAAAAAAAAAAAAA', TRUE);
+VALUES((SELECT id FROM employee_type WHERE name = 'INSTALADOR'), 'Arturo', 'Rivas Paredes', 'AAAAAAAAAAAAAAAAAA', TRUE);
 INSERT INTO employee(employee_type_id, first_name, last_name, curp, status)
-VALUES((SELECT id FROM employee_type WHERE name = 'INSTALADOR'), 'Instalador', 'Num 2', 'BBBBBBBBBBBBBBBBBB', TRUE);
+VALUES((SELECT id FROM employee_type WHERE name = 'INSTALADOR'), 'Mandujano', 'González Pérez', 'BBBBBBBBBBBBBBBBBB', TRUE);
 INSERT INTO employee(employee_type_id, first_name, last_name, curp, status)
-VALUES((SELECT id FROM employee_type WHERE name = 'MANTENEDOR'), 'Mantenedor', 'Num 1', 'CCCCCCCCCCCCCCCCCC', TRUE);
+VALUES((SELECT id FROM employee_type WHERE name = 'MANTENEDOR'), 'Pablo', 'Urrea Solís', 'CCCCCCCCCCCCCCCCCC', TRUE);
 INSERT INTO employee(employee_type_id, first_name, last_name, curp, status)
-VALUES((SELECT id FROM employee_type WHERE name = 'MANTENEDOR'), 'Mantenedor', 'Num 2', 'DDDDDDDDDDDDDDDDDD', TRUE);
+VALUES((SELECT id FROM employee_type WHERE name = 'MANTENEDOR'), 'Adrián', 'Osuna Morales', 'DDDDDDDDDDDDDDDDDD', TRUE);
 INSERT INTO employee(employee_type_id, first_name, last_name, curp, status)
-VALUES((SELECT id FROM employee_type WHERE name = 'INSTALADOR Y MANTENEDOR'), 'Todólogo', 'Num 1', 'EEEEEEEEEEEEEEEEEE', TRUE);
+VALUES((SELECT id FROM employee_type WHERE name = 'INSTALADOR Y MANTENEDOR'), 'Juan', 'Tirado Romero', 'EEEEEEEEEEEEEEEEEE', TRUE);
 INSERT INTO employee(employee_type_id, first_name, last_name, curp, status)
-VALUES((SELECT id FROM employee_type WHERE name = 'INSTALADOR Y MANTENEDOR'), 'Todólogo', 'Num 2', 'FFFFFFFFFFFFFFFFFF', TRUE);
+VALUES((SELECT id FROM employee_type WHERE name = 'INSTALADOR Y MANTENEDOR'), 'Abel', 'Sánchez López', 'FFFFFFFFFFFFFFFFFF', TRUE);
 
 -- Employee email & phone number
-INSERT INTO employee_email(employee_id, email) VALUES(1, 'a@gmail.com');
-INSERT INTO employee_email(employee_id, email) VALUES(2, 'b@gmail.com');
-INSERT INTO employee_email(employee_id, email) VALUES(3, 'c@gmail.com');
-INSERT INTO employee_email(employee_id, email) VALUES(4, 'd@gmail.com');
-INSERT INTO employee_email(employee_id, email) VALUES(5, 'e@gmail.com');
-INSERT INTO employee_email(employee_id, email) VALUES(6, 'f@gmail.com');
-INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(1, '52', '1111111111');
-INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(2, '52', '2222222222');
-INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(3, '52', '3333333333');
-INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(4, '52', '4444444444');
-INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(5, '52', '5555555555');
-INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(6, '52', '6666666666');
+INSERT INTO employee_email(employee_id, email) VALUES(1, 'arturo_instalador@waterwatch.com');
+INSERT INTO employee_email(employee_id, email) VALUES(2, 'mandujano_instalador@waterwatch.com');
+INSERT INTO employee_email(employee_id, email) VALUES(3, 'pablo_mantenedora@waterwatch.com');
+INSERT INTO employee_email(employee_id, email) VALUES(4, 'adrian_mantenedor@gmail.com');
+INSERT INTO employee_email(employee_id, email) VALUES(5, 'juanjose_todologo@gmail.com');
+INSERT INTO employee_email(employee_id, email) VALUES(6, 'abelsanzdev_todologo@gmail.com');
+INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(1, '52', '6692583938');
+INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(2, '52', '6692531290');
+INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(3, '52', '6692843492');
+INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(4, '52', '6692024543');
+INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(5, '52', '6692268561');
+INSERT INTO employee_phone_number(employee_id, country_code, phone_number) VALUES(6, '52', '6692164023');
 
 -- Employee account
 INSERT INTO employee_account(employee_id, username, password)

@@ -18,6 +18,16 @@ type Appointment struct {
 	DoneDate          time.Time `json:"done_date"`
 }
 
+type AppointmentDetails struct {
+	ID                  int64     `json:"id"`
+	EmployeeFullName    string    `json:"employee_full_name"`
+	EmployeeEmail       string    `json:"employee_email"`
+	EmployeePhoneNumber string    `json:"employee_phone_number"`
+	Details             string    `json:"details"`
+	RequestedDate       time.Time `json:"requested_date"`
+	DoneDate            time.Time `json:"done_date"`
+}
+
 func (a *Appointment) CreateAppointment() (int64, error) {
 	is_appointment, err := a.IsAppointment()
 	if err != nil {
@@ -270,36 +280,45 @@ func (a *Appointment) IsAppointment() (bool, error) {
 	return true, nil
 }
 
-func (a *Appointment) GetAllDoneAppointments() ([]*Appointment, error) {
+func (a *Appointment) GetAllDoneAppointments() ([]*AppointmentDetails, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutDB)
 	defer cancel()
 
 	query :=
-		`SELECT id, appointment_type_id, address_id, client_id, employee_id, details, requested_date, done_date
-		FROM appointment WHERE appointment_type_id = $1 AND client_id = $2 AND done_date IS NOT NULL`
+		`SELECT 
+			a.id, 
+			(SELECT ed.full_name FROM get_employee_details(a.employee_id) AS ed) AS full_name,
+			(SELECT ed.phone_number FROM get_employee_details(a.employee_id) AS ed) AS phone_number,
+			(SELECT ed.email FROM get_employee_details(a.employee_id) AS ed) AS email,
+			a.details, 
+			a.requested_date, 
+			a.done_date
+		FROM appointment a
+		WHERE a.appointment_type_id = $1 
+		AND a.client_id = $2 
+		AND a.done_date IS NOT NULL;`
 
 	rows, err := db.QueryContext(ctx, query, a.AppointmentTypeID, a.ClientID)
 	if err != nil {
 		return nil, nil
 	}
 
-	var appointments []*Appointment
+	var appointmentDetails []*AppointmentDetails
 	for rows.Next() {
-		var appointment Appointment
+		var appointmentDetail AppointmentDetails // YES, I KNOW DETAIL IS WRONG
 		err = rows.Scan(
-			&appointment.ID,
-			&appointment.AppointmentTypeID,
-			&appointment.AddressID,
-			&appointment.ClientID,
-			&appointment.EmployeeID,
-			&appointment.Details,
-			&appointment.RequestedDate,
-			&appointment.DoneDate,
+			&appointmentDetail.ID,
+			&appointmentDetail.EmployeeFullName,
+			&appointmentDetail.EmployeeEmail,
+			&appointmentDetail.EmployeePhoneNumber,
+			&appointmentDetail.Details,
+			&appointmentDetail.RequestedDate,
+			&appointmentDetail.DoneDate,
 		)
 		if err != nil {
 			return nil, err
 		}
-		appointments = append(appointments, &appointment)
+		appointmentDetails = append(appointmentDetails, &appointmentDetail)
 	}
-	return appointments, nil
+	return appointmentDetails, nil
 }
