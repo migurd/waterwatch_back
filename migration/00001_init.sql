@@ -226,7 +226,7 @@ CREATE TABLE IF NOT EXISTS public.saa_type
     description character varying(1024) COLLATE pg_catalog."default" NOT NULL,
     capacity integer NOT NULL,
     diameter double precision NOT NULL,
-    height double precision NOT NULL,
+    height integer NOT NULL,
     CONSTRAINT saa_type_pkey PRIMARY KEY (id)
 );
 

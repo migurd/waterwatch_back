@@ -15,9 +15,9 @@ BEGIN
   RETURN QUERY
   SELECT 
     CASE 
-      WHEN is_contaminated OR ph_level < 6.5 OR ph_level > 8.5 OR water_level < 20 THEN 'MALO'
-      WHEN water_level >= 20 AND water_level <= 60 THEN 'MEDIANO'
-      ELSE 'BUENO'
+      WHEN is_contaminated OR ph_level < 6.5 OR ph_level > 8.5 OR water_level < 20 THEN 'Malo'
+      WHEN water_level >= 20 AND water_level <= 60 THEN 'Bueno'
+      ELSE 'Excelente'
     END AS status,
     CONCAT(
       CASE WHEN is_contaminated THEN 'El agua está contaminada. ' ELSE '' END,

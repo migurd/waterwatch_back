@@ -11,13 +11,17 @@ type HomeDetails struct {
 	FullPhoneNumber string `json:"full_phone_number"`
 }
 type SaaDetails struct {
-	SaaID             int64  `json:"saa_id"`
-	SerialKey         string `json:"serial_key"`
-	FullAddress       string `json:"full_address"`
-	SaaName           string `json:"saa_name"`
-	SaaDescription    string `json:"saa_description"`
-	IsGood            string `json:"is_good"`
-	IsGoodDescription string `json:"is_good_description"`
+	SaaID                    int64  `json:"saa_id"`
+	SerialKey                string `json:"serial_key"`
+	FullAddress              string `json:"full_address"`
+	SaaName                  string `json:"saa_name"`
+	SaaDescription           string `json:"saa_description"`
+	IsGood                   string `json:"is_good"`
+	IsGoodDescription        string `json:"is_good_description"`
+	SaaHeight                int    `json:"saa_height"`
+	CurrentSaaCapacity       int    `json:"current_saa_capacity"`
+	MaxSaaCapacity           int    `json:"max_saa_capacity"`
+	DaysSinceLastMaintenance int    `json:"days_since_last_maintenance"`
 }
 
 func (a *Account) GetHomeDetails() (HomeDetails, error) {
@@ -61,6 +65,10 @@ func (sd *SaaDetails) GetAllActiveSaaForClient(client_id int64) ([]*SaaDetails, 
 			&saaDetails.SaaDescription,
 			&saaDetails.IsGood,
 			&saaDetails.IsGoodDescription,
+			&saaDetails.SaaHeight,
+			&saaDetails.CurrentSaaCapacity,
+			&saaDetails.MaxSaaCapacity,
+			&saaDetails.DaysSinceLastMaintenance,
 		)
 		if err != nil {
 			return nil, err
