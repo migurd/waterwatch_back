@@ -21,6 +21,9 @@ type SaaDetails struct {
 	SaaHeight                int    `json:"saa_height"`
 	CurrentSaaCapacity       int    `json:"current_saa_capacity"`
 	MaxSaaCapacity           int    `json:"max_saa_capacity"`
+	SaaHeight2               int    `json:"saa_height2"`
+	CurrentSaaCapacity2      int    `json:"current_saa_capacity2"`
+	MaxSaaCapacity2          int    `json:"max_saa_capacity2"`
 	DaysSinceLastMaintenance int    `json:"days_since_last_maintenance"`
 }
 
@@ -65,9 +68,12 @@ func (sd *SaaDetails) GetAllActiveSaaForClient(client_id int64) ([]*SaaDetails, 
 			&saaDetails.SaaDescription,
 			&saaDetails.IsGood,
 			&saaDetails.IsGoodDescription,
-			&saaDetails.SaaHeight,
 			&saaDetails.CurrentSaaCapacity,
 			&saaDetails.MaxSaaCapacity,
+			&saaDetails.SaaHeight,
+			&saaDetails.CurrentSaaCapacity2,
+			&saaDetails.MaxSaaCapacity2,
+			&saaDetails.SaaHeight2,
 			&saaDetails.DaysSinceLastMaintenance,
 		)
 		if err != nil {

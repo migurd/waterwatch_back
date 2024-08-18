@@ -100,16 +100,18 @@ INSERT INTO appointment(appointment_type_id, address_id, client_id, employee_id,
 VALUES((SELECT id FROM appointment_type WHERE "name" = 'INSTALACIÓN'), 1, 1, 1, 'Mi casa es un changarro ya viejito, pero sí me gustaría tener agua acá bien monitoreada como ustedes promocionan.', '2024-10-10');
 
 INSERT INTO saa_type("name", "description", capacity, diameter, height)
-VALUES('TINACO TRICAPA 1100 L EQUIPADO', 'Tinaco Sistema Mejor Agua (SMA) 1100 L Equipado Rotoplas fabricado con polietileno lineal de baja densidad, color beige por fuera y blanco por dentro.', 1100, 110, 137);
+VALUES('Garrafón de agua cortado', 'Se utilizó este contenedor como tinaco para poder hacer un test con un contenedor de agua.', 15, 25, 35);
+INSERT INTO saa_type("name", "description", capacity, diameter, height)
+VALUES('Pecera de prueba', 'Pecera utilizada para la prueba de demostración que blah blah', 38, 30, 30);
 
-INSERT INTO saa(appointment_id, saa_type_id, iot_device_id)
-VALUES(1, 1, (SELECT id FROM iot_device WHERE serial_key = 'AAAAA-AAAAA-AAAAA'));
+INSERT INTO saa(appointment_id, saa_type_id, saa_type_id2, iot_device_id)
+VALUES(1, 1, 2, (SELECT id FROM iot_device WHERE serial_key = 'AAAAA-AAAAA-AAAAA'));
 
 INSERT INTO saa_description(saa_id, "name", "description")
 VALUES(1, 'Tinaco 1', 'Tinaco que está en el techo de mi abuelita Pancha');
 
-INSERT INTO saa_record(saa_id, water_level, ph_level, is_contaminated, date)
-VALUES(1, 80, 7, false, NOW());
+INSERT INTO saa_record(saa_id, water_level, water_level2, ph_level, date)
+VALUES(1, 80, 100, 7, NOW());
 
 UPDATE appointment SET done_date = '2024-10-10' WHERE id = 1;
 

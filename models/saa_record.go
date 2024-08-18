@@ -6,12 +6,12 @@ import (
 )
 
 type SaaRecord struct {
-	ID             int64     `json:"id"`
-	SaaID          int64     `json:"saa_id"`
-	WaterLevel     float64   `json:"water_level"`
-	PhLevel        float64   `json:"ph_level"`
-	IsContaminated bool      `json:"is_contaminated"`
-	Date           time.Time `json:"date"`
+	ID          int64     `json:"id"`
+	SaaID       int64     `json:"saa_id"`
+	WaterLevel  float64   `json:"water_level"`
+	WaterLevel2 float64   `json:"water_level2"`
+	PhLevel     float64   `json:"ph_level"`
+	Date        time.Time `json:"date"`
 }
 
 func (s *SaaRecord) CreateSaaRecord() error {
@@ -20,7 +20,7 @@ func (s *SaaRecord) CreateSaaRecord() error {
 
 	query :=
 		`INSERT INTO saa_record
-		(saa_id, water_level, ph_level, is_contaminated, date)
+		(saa_id, water_level, water_level2, ph_level, date)
 		VALUES ($1, $2, $3, $4, $5)`
 
 	_, err := db.QueryContext(
@@ -28,8 +28,8 @@ func (s *SaaRecord) CreateSaaRecord() error {
 		query,
 		s.SaaID,
 		s.WaterLevel,
+		s.WaterLevel2,
 		s.PhLevel,
-		s.IsContaminated,
 		time.Now(),
 	)
 	if err != nil {
@@ -56,8 +56,8 @@ func (s *SaaRecord) GetAllSaaRecordsBySaaID() ([]*SaaRecord, error) {
 			&saaRecord.ID,
 			&saaRecord.SaaID,
 			&saaRecord.WaterLevel,
+			&saaRecord.WaterLevel2,
 			&saaRecord.PhLevel,
-			&saaRecord.IsContaminated,
 			&saaRecord.Date,
 		)
 		if err != nil {
@@ -80,8 +80,8 @@ func (s *SaaRecord) GetLastSaaRecord() (SaaRecord, error) {
 		&saaRecord.ID,
 		&saaRecord.SaaID,
 		&saaRecord.WaterLevel,
+		&saaRecord.WaterLevel2,
 		&saaRecord.PhLevel,
-		&saaRecord.IsContaminated,
 		&saaRecord.Date,
 	)
 	if err != nil {

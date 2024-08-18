@@ -185,8 +185,10 @@ CREATE TABLE IF NOT EXISTS public.saa
     id bigserial NOT NULL,
     appointment_id bigint NOT NULL,
     saa_type_id bigint NOT NULL,
+    saa_type_id2 bigint,
     iot_device_id bigint NOT NULL,
-    CONSTRAINT saa_pkey PRIMARY KEY (id)
+    CONSTRAINT saa_pkey PRIMARY KEY (id),
+    UNIQUE (saa_type_id, saa_type_id2)
 );
 
 CREATE TABLE IF NOT EXISTS public.saa_description
@@ -210,8 +212,8 @@ CREATE TABLE IF NOT EXISTS public.saa_record
     id bigserial NOT NULL,
     saa_id bigint NOT NULL,
     water_level double precision NOT NULL,
+    water_level2 double precision NOT NULL DEFAULT -1,
     ph_level double precision NOT NULL,
-    is_contaminated boolean NOT NULL DEFAULT false,
     date timestamp with time zone NOT NULL,
     CONSTRAINT saa_record_pkey PRIMARY KEY (id)
 );
@@ -268,12 +270,14 @@ ALTER TABLE IF EXISTS public.appointment
     ON DELETE NO ACTION
     NOT VALID;
 
+
 ALTER TABLE IF EXISTS public.appointment
     ADD CONSTRAINT appointment_client_id_fkey FOREIGN KEY (client_id)
     REFERENCES public.client (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
+
 
 ALTER TABLE IF EXISTS public.appointment
     ADD CONSTRAINT appointment_employee_id_fkey FOREIGN KEY (employee_id)
@@ -393,6 +397,14 @@ ALTER TABLE IF EXISTS public.saa
 
 ALTER TABLE IF EXISTS public.saa
     ADD CONSTRAINT saa_saa_type_id_fkey FOREIGN KEY (saa_type_id)
+    REFERENCES public.saa_type (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.saa
+    ADD FOREIGN KEY (saa_type_id2)
     REFERENCES public.saa_type (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION

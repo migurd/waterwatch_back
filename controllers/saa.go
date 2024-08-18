@@ -40,14 +40,15 @@ func (*Controllers) GetSaaHeight(w http.ResponseWriter, r *http.Request) error {
 	iot_device.SerialKey = serialKey
 
 	// Calculate the height using the IoT device's method
-	height, err := iot_device.GetHeight()
+	height, height2, err := iot_device.GetHeight()
 	if err != nil {
 		return err
 	}
 
 	// Prepare the response
 	response := map[string]interface{}{
-		"height": height,
+		"height":  height,
+		"height2": height2,
 	}
 
 	// Send the response as JSON

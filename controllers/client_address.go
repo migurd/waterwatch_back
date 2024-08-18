@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/migurd/waterwatch_back/helpers"
 	"github.com/migurd/waterwatch_back/models"
@@ -92,21 +94,34 @@ func (c *Controllers) UpdateClientAddress(w http.ResponseWriter, r *http.Request
 }
 
 func (c *Controllers) DeleteClientAddress(w http.ResponseWriter, r *http.Request) error {
-	var clientAddress models.ClientAddress
-
-	err := json.NewDecoder(r.Body).Decode(&clientAddress)
+	// Extract address_id from the request headers
+	addressID := r.Header.Get("address_id")
+	if addressID == "" {
+		http.Error(w, "Missing address_id in headers", http.StatusBadRequest)
+		return fmt.Errorf("missing address_id in headers")
+	}
+	addressIDValue, err := strconv.ParseInt(addressID, 10, 64)
 	if err != nil {
 		return err
 	}
 
+	// Extract claims from the request
 	claims, err := GetClaims(r)
 	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return err
 	}
-	clientAddress.ClientID = claims.ID
 
+	// Create a ClientAddress object and set the relevant fields
+	clientAddress := models.ClientAddress{
+		ID:       addressIDValue,
+		ClientID: claims.ID,
+	}
+
+	// Attempt to delete the client address
 	err = clientAddress.DeleteClientAddress()
 	if err != nil {
+		http.Error(w, "Failed to delete address", http.StatusInternalServerError)
 		return err
 	}
 

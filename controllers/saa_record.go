@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/migurd/waterwatch_back/helpers"
 	"github.com/migurd/waterwatch_back/models"
@@ -71,14 +73,18 @@ func (c *Controllers) GetSaaRecords(w http.ResponseWriter, r *http.Request) erro
 }
 
 func (c *Controllers) GetLastSaaRecord(w http.ResponseWriter, r *http.Request) error {
-	var saa models.Saa
 	var saaRecord models.SaaRecord // used to extract all records
 
-	err := json.NewDecoder(r.Body).Decode(&saa) // gets id
+	saaID := r.URL.Query().Get("saa_id")
+	if saaID == "" {
+		// Handle the empty string case
+		log.Println("Parameter is empty")
+	}
+	saaIDValue, err := strconv.ParseInt(saaID, 10, 64)
 	if err != nil {
 		return err
 	}
-	saaRecord.SaaID = saa.ID
+	saaRecord.SaaID = saaIDValue
 
 	saaRecord, err = saaRecord.GetLastSaaRecord()
 	if err != nil {
