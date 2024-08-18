@@ -96,8 +96,8 @@ INSERT INTO account_security(account_client_id, is_password_encrypted)
 VALUES(1, FALSE);
 
 -- enable first SAA for testing
-INSERT INTO appointment(id, appointment_type_id, address_id, client_id, employee_id, details, requested_date)
-VALUES(1, (SELECT id FROM appointment_type WHERE "name" = 'INSTALACIÓN'), 1, 1, 1, 'Mi casa es un changarro ya viejito, pero sí me gustaría tener agua acá bien monitoreada como ustedes promocionan.', '2024-10-10');
+INSERT INTO appointment(appointment_type_id, address_id, client_id, employee_id, details, requested_date)
+VALUES((SELECT id FROM appointment_type WHERE "name" = 'INSTALACIÓN'), 1, 1, 1, 'Mi casa es un changarro ya viejito, pero sí me gustaría tener agua acá bien monitoreada como ustedes promocionan.', '2024-10-10');
 
 INSERT INTO saa_type("name", "description", capacity, diameter, height)
 VALUES('TINACO TRICAPA 1100 L EQUIPADO', 'Tinaco Sistema Mejor Agua (SMA) 1100 L Equipado Rotoplas fabricado con polietileno lineal de baja densidad, color beige por fuera y blanco por dentro.', 1100, 110, 137);
@@ -116,8 +116,8 @@ UPDATE appointment SET done_date = '2024-10-10' WHERE id = 1;
 UPDATE iot_device SET "status" = TRUE WHERE serial_key = 'AAAAA-AAAAA-AAAAA';
 
 -- first maintenance thingy
-INSERT INTO appointment(id, appointment_type_id, address_id, client_id, employee_id, details, requested_date)
-VALUES(2, (SELECT id FROM appointment_type WHERE "name" = 'MANTENIMIENTO'), 1, 1, 3, '¡Hay agua de coco por todas partes, apresúrense!', '2024-08-12');
+INSERT INTO appointment(appointment_type_id, address_id, client_id, employee_id, details, requested_date)
+VALUES((SELECT id FROM appointment_type WHERE "name" = 'MANTENIMIENTO'), 1, 1, 3, '¡Hay agua de coco por todas partes, apresúrense!', '2024-08-12');
 
 UPDATE appointment SET done_date = '2024-08-12' WHERE id = 2;
 

@@ -34,11 +34,6 @@ func (c *Controllers) CreateClientAddress(w http.ResponseWriter, r *http.Request
 func (c *Controllers) GetClientAddress(w http.ResponseWriter, r *http.Request) error {
 	var clientAddress models.ClientAddress
 
-	err := json.NewDecoder(r.Body).Decode(&clientAddress)
-	if err != nil {
-		return err
-	}
-
 	claims, err := GetClaims(r)
 	if err != nil {
 		return err
@@ -56,11 +51,6 @@ func (c *Controllers) GetClientAddress(w http.ResponseWriter, r *http.Request) e
 
 func (c *Controllers) GetAllClientAddresses(w http.ResponseWriter, r *http.Request) error {
 	var clientAddress models.ClientAddress
-
-	err := json.NewDecoder(r.Body).Decode(&clientAddress)
-	if err != nil {
-		return err
-	}
 
 	claims, err := GetClaims(r)
 	if err != nil {
