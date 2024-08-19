@@ -11,20 +11,23 @@ type HomeDetails struct {
 	FullPhoneNumber string `json:"full_phone_number"`
 }
 type SaaDetails struct {
-	SaaID                    int64  `json:"saa_id"`
-	SerialKey                string `json:"serial_key"`
-	FullAddress              string `json:"full_address"`
-	SaaName                  string `json:"saa_name"`
-	SaaDescription           string `json:"saa_description"`
-	IsGood                   string `json:"is_good"`
-	IsGoodDescription        string `json:"is_good_description"`
-	SaaHeight                int    `json:"saa_height"`
-	CurrentSaaCapacity       int    `json:"current_saa_capacity"`
-	MaxSaaCapacity           int    `json:"max_saa_capacity"`
-	SaaHeight2               int    `json:"saa_height2"`
-	CurrentSaaCapacity2      int    `json:"current_saa_capacity2"`
-	MaxSaaCapacity2          int    `json:"max_saa_capacity2"`
-	DaysSinceLastMaintenance int    `json:"days_since_last_maintenance"`
+	SaaID                    int64   `json:"saa_id"`
+	SerialKey                string  `json:"serial_key"`
+	FullAddress              string  `json:"full_address"`
+	SaaName                  string  `json:"saa_name"`
+	SaaDescription           string  `json:"saa_description"`
+	IsGood                   string  `json:"is_good"`
+	IsGoodDescription        string  `json:"is_good_description"`
+	SaaHeight                int     `json:"saa_height"`
+	CurrentSaaCapacity       int     `json:"current_saa_capacity"`
+	MaxSaaCapacity           int     `json:"max_saa_capacity"`
+	SaaHeight2               int     `json:"saa_height2"`
+	CurrentSaaCapacity2      int     `json:"current_saa_capacity2"`
+	MaxSaaCapacity2          int     `json:"max_saa_capacity2"`
+	DaysSinceLastMaintenance int     `json:"days_since_last_maintenance"`
+	WaterLevel               float64 `json:"water_level"`
+	WaterLevel2              float64 `json:"water_level2"`
+	PhLevel                  float64 `json:"ph_level"`
 }
 
 func (a *Account) GetHomeDetails() (HomeDetails, error) {
@@ -75,6 +78,9 @@ func (sd *SaaDetails) GetAllActiveSaaForClient(client_id int64) ([]*SaaDetails, 
 			&saaDetails.MaxSaaCapacity2,
 			&saaDetails.SaaHeight2,
 			&saaDetails.DaysSinceLastMaintenance,
+			&saaDetails.WaterLevel,
+			&saaDetails.WaterLevel2,
+			&saaDetails.PhLevel,
 		)
 		if err != nil {
 			return nil, err

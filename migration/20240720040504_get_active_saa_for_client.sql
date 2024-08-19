@@ -15,7 +15,10 @@ RETURNS TABLE(
   current_saa_capacity2 double precision,
   max_saa_capacity2 INT,
   saa_height2 INT,
-  days_since_last_maintenance integer
+  days_since_last_maintenance integer,
+  water_level double precision,
+  water_level2 double precision,
+  ph_level double precision
   -- last_maintenance_date DATE
 ) AS $$
 BEGIN
@@ -40,7 +43,10 @@ BEGIN
        WHERE ap.client_id = get_all_active_saa_for_client.client_id 
          AND ap.appointment_type_id = 2),
       -1
-    ) AS days_since_last_maintenance
+    ) AS days_since_last_maintenance,
+    (SELECT sr.water_level FROM saa_record sr WHERE sr.saa_id = saa.id ORDER BY sr.date DESC LIMIT 1) AS water_level,
+    (SELECT sr.water_level2 FROM saa_record sr WHERE sr.saa_id = saa.id ORDER BY sr.date DESC LIMIT 1) AS water_level2,
+    (SELECT sr.ph_level FROM saa_record sr WHERE sr.saa_id = saa.id ORDER BY sr.date DESC LIMIT 1) AS ph_level
     -- (SELECT MAX(ap.done_date)::DATE
     --    FROM appointment ap 
     --    WHERE ap.client_id = get_all_active_saa_for_client.client_id 
