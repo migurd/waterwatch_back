@@ -111,7 +111,7 @@ INSERT INTO saa_description(saa_id, "name", "description")
 VALUES(1, 'Tinaco 1', 'Tinaco que está en el techo de mi abuelita Pancha');
 
 INSERT INTO saa_record(saa_id, water_level, water_level2, ph_level, date)
-VALUES(1, 80, 100, 7, NOW());
+VALUES(1, 14, 76, 7, NOW());
 
 UPDATE appointment SET done_date = '2024-10-10' WHERE id = 1;
 
